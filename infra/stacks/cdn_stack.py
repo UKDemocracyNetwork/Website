@@ -1,4 +1,4 @@
-from aws_cdk import Duration, Stack
+from aws_cdk import CfnOutput, Duration, Stack
 from aws_cdk import aws_certificatemanager as acm
 from aws_cdk import aws_cloudfront as cloudfront
 from aws_cdk import aws_cloudfront_origins as origins
@@ -96,6 +96,8 @@ class CdnStack(Stack):
                 ),
             },
         )
+
+        CfnOutput(self, "DistributionId", value=self.distribution.distribution_id)
 
         # Apex A + AAAA alias records pointing to CloudFront
         route53.ARecord(

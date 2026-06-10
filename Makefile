@@ -1,7 +1,8 @@
 .DEFAULT_GOAL := help
 
-# Override on the command line: make deploy-dev DOMAIN=prod.example.com
+# Override on the command line: make deploy-dev DOMAIN=prod.example.com IMAGE_TAG=abc1234
 DOMAIN ?= website.dn.womblelabs.co.uk
+IMAGE_TAG ?= latest
 
 .PHONY: help install dev dev-stop dev-logs dev-build dev-clean \
         lint format test synth deploy-dev new-env smoke
@@ -61,7 +62,7 @@ synth:
 	cdk synth -c domain=$(DOMAIN)
 
 deploy-dev:
-	cdk deploy --all --require-approval never -c domain=$(DOMAIN)
+	cdk deploy --all --require-approval never -c domain=$(DOMAIN) -c imageTag=$(IMAGE_TAG)
 
 new-env:
 	uv run python scripts/new_env.py

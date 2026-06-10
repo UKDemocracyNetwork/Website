@@ -123,7 +123,8 @@ def print_next_steps(account_id: str) -> None:
     print("  4. After NetworkStack deploys, add the Route 53 NS records from the")
     print("     stack output to the parent zone (dn.womblelabs.co.uk).")
     print()
-    print("  GitHub Actions OIDC: TODO — scripts/setup_oidc.py (not yet written).")
+    print("  5. Create the GitHub Actions OIDC provider and deploy role:")
+    print("       uv run python scripts/setup_oidc.py")
 
 
 def main() -> None:
