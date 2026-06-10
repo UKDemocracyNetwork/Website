@@ -1,0 +1,10 @@
+{
+  "name": "dn-theme",
+  "description": "DN Website Ghost theme",
+  "version": "0.1.0",
+  "engines": {
+    "ghost": ">=5.0.0"
+  },
+  "license": "MIT",
+  "keywords": ["ghost-theme"]
+}
