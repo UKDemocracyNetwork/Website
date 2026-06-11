@@ -16,7 +16,8 @@ class DatabaseStack(Stack):
         super().__init__(scope, id, **kwargs)
 
         self.db_security_group = ec2.SecurityGroup(
-            self, "DbSecurityGroup",
+            self,
+            "DbSecurityGroup",
             vpc=vpc,
             description="Ghost RDS MySQL",
             allow_all_outbound=False,
@@ -31,12 +32,14 @@ class DatabaseStack(Stack):
         # Password resolved from SSM at CloudFormation deploy time via dynamic reference.
         # new_env.py must write /ghost/database/password before cdk deploy is run.
         self.instance = rds.DatabaseInstance(
-            self, "GhostDb",
+            self,
+            "GhostDb",
             engine=rds.DatabaseInstanceEngine.mysql(
                 version=rds.MysqlEngineVersion.VER_8_0,
             ),
             instance_type=ec2.InstanceType.of(
-                ec2.InstanceClass.T4G, ec2.InstanceSize.MICRO,
+                ec2.InstanceClass.T4G,
+                ec2.InstanceSize.MICRO,
             ),
             vpc=vpc,
             vpc_subnets=ec2.SubnetSelection(

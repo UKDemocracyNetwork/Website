@@ -31,7 +31,8 @@ class AppStack(Stack):
 
         # S3 bucket for Ghost media uploads
         self.media_bucket = s3.Bucket(
-            self, "MediaBucket",
+            self,
+            "MediaBucket",
             encryption=s3.BucketEncryption.S3_MANAGED,
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
             removal_policy=RemovalPolicy.RETAIN,
@@ -40,7 +41,8 @@ class AppStack(Stack):
 
         # ACM certificate for the ALB — eu-west-2, DNS validated via Route 53
         alb_certificate = acm.Certificate(
-            self, "AlbCertificate",
+            self,
+            "AlbCertificate",
             domain_name=domain_name,
             validation=acm.CertificateValidation.from_dns(hosted_zone),
         )
@@ -50,26 +52,24 @@ class AppStack(Stack):
 
         # Execution role: ECS infrastructure (pull image, write logs, read SSM secrets)
         execution_role = iam.Role(
-            self, "TaskExecutionRole",
+            self,
+            "TaskExecutionRole",
             assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
             managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name(
-                    "service-role/AmazonECSTaskExecutionRolePolicy"
-                ),
+                iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonECSTaskExecutionRolePolicy"),
             ],
         )
 
         # Task role: Ghost application (S3 read/write)
         task_role = iam.Role(
-            self, "TaskRole",
+            self,
+            "TaskRole",
             assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
         )
         self.media_bucket.grant_read_write(task_role)
 
         # SSM parameter references — values resolved by ECS at task start, not at synth time
-        ghost_url_param = ssm.StringParameter.from_string_parameter_name(
-            self, "GhostUrlParam", "/ghost/url"
-        )
+        ghost_url_param = ssm.StringParameter.from_string_parameter_name(self, "GhostUrlParam", "/ghost/url")
         db_password_param = ssm.StringParameter.from_string_parameter_name(
             self, "DbPasswordParam", "/ghost/database/password"
         )
@@ -79,7 +79,8 @@ class AppStack(Stack):
 
         # Task definition
         task_def = ecs.FargateTaskDefinition(
-            self, "TaskDef",
+            self,
+            "TaskDef",
             cpu=512,
             memory_limit_mib=1024,
             task_role=task_role,
@@ -120,7 +121,8 @@ class AppStack(Stack):
 
         # Security groups
         alb_sg = ec2.SecurityGroup(
-            self, "AlbSg",
+            self,
+            "AlbSg",
             vpc=vpc,
             description="Ghost ALB",
         )
@@ -130,7 +132,8 @@ class AppStack(Stack):
         alb_sg.add_ingress_rule(ec2.Peer.any_ipv6(), ec2.Port.tcp(80))
 
         ecs_sg = ec2.SecurityGroup(
-            self, "EcsSg",
+            self,
+            "EcsSg",
             vpc=vpc,
             description="Ghost ECS tasks",
         )
@@ -138,7 +141,8 @@ class AppStack(Stack):
 
         # ALB
         self.alb = elbv2.ApplicationLoadBalancer(
-            self, "Alb",
+            self,
+            "Alb",
             vpc=vpc,
             internet_facing=True,
             security_group=alb_sg,
@@ -146,7 +150,8 @@ class AppStack(Stack):
         )
 
         target_group = elbv2.ApplicationTargetGroup(
-            self, "TargetGroup",
+            self,
+            "TargetGroup",
             vpc=vpc,
             port=2368,
             protocol=elbv2.ApplicationProtocol.HTTP,
@@ -178,7 +183,8 @@ class AppStack(Stack):
 
         # ECS Service — public subnets, assign_public_ip so tasks can reach ECR without NAT
         self.service = ecs.FargateService(
-            self, "GhostService",
+            self,
+            "GhostService",
             cluster=cluster,
             task_definition=task_def,
             desired_count=1,

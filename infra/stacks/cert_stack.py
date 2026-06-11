@@ -19,7 +19,8 @@ class CertStack(Stack):
         super().__init__(scope, id, **kwargs)
 
         self.certificate = acm.Certificate(
-            self, "Certificate",
+            self,
+            "Certificate",
             domain_name=domain_name,
             validation=acm.CertificateValidation.from_dns(hosted_zone),
         )

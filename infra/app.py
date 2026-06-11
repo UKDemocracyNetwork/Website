@@ -29,13 +29,15 @@ ecr_stack = EcrStack(app, "EcrStack", env=env_eu)
 network_stack = NetworkStack(app, "NetworkStack", domain_name=domain_name, env=env_eu)
 
 database_stack = DatabaseStack(
-    app, "DatabaseStack",
+    app,
+    "DatabaseStack",
     vpc=network_stack.vpc,
     env=env_eu,
 )
 
 app_stack = AppStack(
-    app, "AppStack",
+    app,
+    "AppStack",
     vpc=network_stack.vpc,
     repository=ecr_stack.repository,
     db_instance=database_stack.instance,
@@ -48,7 +50,8 @@ app_stack = AppStack(
 # CloudFront cert must live in us-east-1; cross_region_references lets CDK pass the ARN
 # to CdnStack (eu-west-2) via a CDK-managed SSM parameter during deployment.
 cert_stack = CertStack(
-    app, "CertStack",
+    app,
+    "CertStack",
     domain_name=domain_name,
     hosted_zone=network_stack.hosted_zone,
     cross_region_references=True,
@@ -56,7 +59,8 @@ cert_stack = CertStack(
 )
 
 cdn_stack = CdnStack(
-    app, "CdnStack",
+    app,
+    "CdnStack",
     alb=app_stack.alb,
     certificate=cert_stack.certificate,
     hosted_zone=network_stack.hosted_zone,

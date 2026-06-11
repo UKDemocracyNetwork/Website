@@ -8,6 +8,7 @@ Usage:
     uv run python scripts/setup_oidc.py
     uv run python scripts/setup_oidc.py --repo UKDemocracyNetwork/Website
 """
+
 import argparse
 import json
 import sys
@@ -49,10 +50,7 @@ def trust_policy(account_id: str, repo: str) -> dict:
             {
                 "Effect": "Allow",
                 "Principal": {
-                    "Federated": (
-                        f"arn:aws:iam::{account_id}:oidc-provider/"
-                        "token.actions.githubusercontent.com"
-                    )
+                    "Federated": (f"arn:aws:iam::{account_id}:oidc-provider/token.actions.githubusercontent.com")
                 },
                 "Action": "sts:AssumeRoleWithWebIdentity",
                 "Condition": {
@@ -61,9 +59,7 @@ def trust_policy(account_id: str, repo: str) -> dict:
                     },
                     # Scope to the main branch only — PRs cannot assume this role.
                     "StringLike": {
-                        "token.actions.githubusercontent.com:sub": (
-                            f"repo:{repo}:ref:refs/heads/main"
-                        ),
+                        "token.actions.githubusercontent.com:sub": (f"repo:{repo}:ref:refs/heads/main"),
                     },
                 },
             }
@@ -103,9 +99,7 @@ def deploy_policy(account_id: str) -> dict:
                     "ecr:BatchGetImage",
                     "ecr:GetDownloadUrlForLayer",
                 ],
-                "Resource": (
-                    f"arn:aws:ecr:{REGION}:{account_id}:repository/dn-website-ghost"
-                ),
+                "Resource": (f"arn:aws:ecr:{REGION}:{account_id}:repository/dn-website-ghost"),
             },
             # Invalidate CloudFront cache after each deploy.
             {
@@ -151,9 +145,7 @@ def ensure_role(iam, account_id: str, repo: str) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Set up GitHub Actions OIDC for this AWS account."
-    )
+    parser = argparse.ArgumentParser(description="Set up GitHub Actions OIDC for this AWS account.")
     parser.add_argument(
         "--repo",
         default="UKDemocracyNetwork/Website",

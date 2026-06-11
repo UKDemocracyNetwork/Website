@@ -11,7 +11,8 @@ class NetworkStack(Stack):
         # No NAT gateways: ECS runs in public subnets with assign_public_ip to reach ECR.
         # RDS runs in isolated subnets (no internet route needed).
         self.vpc = ec2.Vpc(
-            self, "Vpc",
+            self,
+            "Vpc",
             ip_addresses=ec2.IpAddresses.cidr("10.0.0.0/16"),
             max_azs=2,
             nat_gateways=0,
@@ -30,12 +31,14 @@ class NetworkStack(Stack):
         )
 
         self.hosted_zone = route53.HostedZone(
-            self, "HostedZone",
+            self,
+            "HostedZone",
             zone_name=domain_name,
         )
 
         CfnOutput(
-            self, "NameServers",
+            self,
+            "NameServers",
             description="Add these NS records to the parent zone to delegate DNS",
             value=Fn.join(",", self.hosted_zone.hosted_zone_name_servers),
         )

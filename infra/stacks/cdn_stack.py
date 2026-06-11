@@ -23,7 +23,8 @@ class CdnStack(Stack):
         super().__init__(scope, id, **kwargs)
 
         html_cache_policy = cloudfront.CachePolicy(
-            self, "HtmlCachePolicy",
+            self,
+            "HtmlCachePolicy",
             cache_policy_name="GhostHtmlCache",
             default_ttl=Duration.minutes(10),
             min_ttl=Duration.seconds(0),
@@ -33,7 +34,8 @@ class CdnStack(Stack):
         )
 
         static_cache_policy = cloudfront.CachePolicy(
-            self, "StaticCachePolicy",
+            self,
+            "StaticCachePolicy",
             cache_policy_name="GhostStaticCache",
             default_ttl=Duration.days(365),
             min_ttl=Duration.days(1),
@@ -58,7 +60,8 @@ class CdnStack(Stack):
         )
 
         self.distribution = cloudfront.Distribution(
-            self, "Distribution",
+            self,
+            "Distribution",
             domain_names=[domain_name],
             certificate=certificate,
             minimum_protocol_version=cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
@@ -101,16 +104,14 @@ class CdnStack(Stack):
 
         # Apex A + AAAA alias records pointing to CloudFront
         route53.ARecord(
-            self, "AliasRecord",
+            self,
+            "AliasRecord",
             zone=hosted_zone,
-            target=route53.RecordTarget.from_alias(
-                targets.CloudFrontTarget(self.distribution)
-            ),
+            target=route53.RecordTarget.from_alias(targets.CloudFrontTarget(self.distribution)),
         )
         route53.AaaaRecord(
-            self, "AaaaRecord",
+            self,
+            "AaaaRecord",
             zone=hosted_zone,
-            target=route53.RecordTarget.from_alias(
-                targets.CloudFrontTarget(self.distribution)
-            ),
+            target=route53.RecordTarget.from_alias(targets.CloudFrontTarget(self.distribution)),
         )

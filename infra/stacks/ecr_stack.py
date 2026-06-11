@@ -8,7 +8,8 @@ class EcrStack(Stack):
         super().__init__(scope, id, **kwargs)
 
         self.repository = ecr.Repository(
-            self, "GhostRepository",
+            self,
+            "GhostRepository",
             repository_name="dn-website-ghost",
             image_scan_on_push=True,
             lifecycle_rules=[
