@@ -67,7 +67,7 @@ def write_via_sdk(session: boto3.Session, values: dict[str, str], force: bool) -
             if code == "ParameterAlreadyExists":
                 print(f"  SKIP  {name}  (already exists — use --force to overwrite)")
             elif code == "SubscriptionRequiredException":
-                print(f"\n  ERROR: SubscriptionRequiredException — SSM is not available via SDK in this account.")
+                print("\n  ERROR: SubscriptionRequiredException — SSM is not available via SDK in this account.")
                 return False
             else:
                 raise
@@ -111,10 +111,13 @@ def print_next_steps(account_id: str) -> None:
     print()
     print("  2. Deploy EcrStack first, then build and push the Ghost image:")
     print("       cdk deploy EcrStack")
-    print(f"       aws ecr get-login-password --region eu-west-2 | \\")
+    print("       aws ecr get-login-password --region eu-west-2 | \\")
     print(f"         docker login --username AWS --password-stdin {account_id}.dkr.ecr.eu-west-2.amazonaws.com")
     print("       docker build -f docker/ghost/Dockerfile -t dn-website-ghost:latest .")
-    print(f"       docker tag dn-website-ghost:latest {account_id}.dkr.ecr.eu-west-2.amazonaws.com/dn-website-ghost:latest")
+    print(
+        f"       docker tag dn-website-ghost:latest "
+        f"{account_id}.dkr.ecr.eu-west-2.amazonaws.com/dn-website-ghost:latest"
+    )
     print(f"       docker push {account_id}.dkr.ecr.eu-west-2.amazonaws.com/dn-website-ghost:latest")
     print()
     print("  3. Deploy remaining stacks:")

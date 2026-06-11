@@ -1,4 +1,5 @@
 import os
+
 import requests
 
 BASE_URL = os.environ.get("SMOKE_URL", "http://localhost:8080")
