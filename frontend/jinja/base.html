@@ -1,30 +1,30 @@
-{{!-- GENERATED FILE - DO NOT EDIT. Edit frontend/shell/shell.html and run `make build`. --}}
+{# GENERATED FILE - DO NOT EDIT. Edit frontend/shell/shell.html and run `make build`. #}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{meta_title}}</title>
-    <link rel="stylesheet" href="{{asset "css/screen.css"}}">
-    {{ghost_head}}
+    <title>{{ meta_title }}</title>
+    <link rel="stylesheet" href="/static/css/screen.css">
+    {% block head %}{% endblock %}
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <header role="banner">
         <nav aria-label="Site navigation">
-            <a href="{{@site.url}}">{{@site.title}}</a>
+            <a href="{{ site_url }}">{{ site_title }}</a>
         </nav>
     </header>
 
     <main id="main-content" class="prose">
-        {{{body}}}
+        {% block content %}{% endblock %}
     </main>
 
     <footer>
-        <p>&copy; {{date format="YYYY"}} {{@site.title}}</p>
+        <p>&copy; {{ current_year }} {{ site_title }}</p>
     </footer>
 
-    {{ghost_foot}}
+    {% block foot %}{% endblock %}
 </body>
 </html>

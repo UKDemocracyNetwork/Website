@@ -1,0 +1,244 @@
+/*
+ * Design tokens — the single source of design decisions for the site.
+ *
+ * Pure CSS custom properties (no SASS). Two tiers:
+ *
+ *   1. PRIMITIVES — raw, context-free values (palette, scales). The raw material.
+ *      Do NOT use these directly in components.
+ *   2. SEMANTIC   — role-based tokens that map primitives to usage
+ *                   (--color-text, --space-md, ...). USE THESE in components.
+ *
+ * Why two tiers: change a primitive to re-tune the whole system; change a
+ * semantic mapping to re-skin without touching components.
+ *
+ * Colours follow Kevin Powell's "pragmatic guide to modern CSS colours"
+ * (piccalil.li, 2025):
+ *   - oklch() palette — perceptually uniform (equal lightness *looks* equal
+ *     across hues) and wide-gamut capable. oklch(L C H): L 0–1, C chroma
+ *     (0 = grey), H 0–360. The whole palette derives from ONE hex
+ *     (--color-brand-base) via relative colour, so a rebrand is one hex edit.
+ *   - light-dark() semantics — light & dark defined in one place; driven by
+ *     `color-scheme`. No parallel @media block to keep in sync.
+ *   - Relative colour `oklch(from … l c h / α)` and color-mix() derive colours
+ *     instead of hand-picking them.
+ *   - prefers-contrast: more — a small high-contrast remap of the semantic
+ *     colour roles (see the @media block at the foot of this file).
+ *
+ * Naming: --<category>-<name>[-<step>]. Steps 50–900 go light → dark.
+ * Units: rem for anything that should scale with the user's font size.
+ */
+
+:root {
+  /* =====================================================================
+   * 1. PRIMITIVES — raw values. Not for direct use in components.
+   * ================================================================== */
+
+  /* --- Brand colour: set this ONE hex (any colour format works) ------- *
+   * The whole palette derives from it. --color-brand-500 IS this value; the
+   * other steps and the neutrals are built from it with relative colour, so a
+   * rebrand is a single edit here. */
+  --color-brand-base: #f86241;
+
+  /* --- Color: neutrals (borrow the brand hue, near-zero chroma) ------- *
+   * `h` pulls the hue from the brand base so greys harmonise with the brand;
+   * chroma stays tiny so they still read as greys. Absolute, perceptual
+   * lightness ladder (greys shouldn't move when the brand lightness changes). */
+  --color-white: #fff;
+  --color-black: #000;
+  --color-neutral-50:  oklch(from var(--color-brand-base) 0.985 0.004 h);
+  --color-neutral-100: oklch(from var(--color-brand-base) 0.965 0.005 h);
+  --color-neutral-200: oklch(from var(--color-brand-base) 0.925 0.006 h);
+  --color-neutral-300: oklch(from var(--color-brand-base) 0.875 0.008 h);
+  --color-neutral-400: oklch(from var(--color-brand-base) 0.790 0.010 h);
+  --color-neutral-500: oklch(from var(--color-brand-base) 0.680 0.012 h);
+  --color-neutral-600: oklch(from var(--color-brand-base) 0.580 0.013 h);
+  --color-neutral-700: oklch(from var(--color-brand-base) 0.470 0.014 h);
+  --color-neutral-800: oklch(from var(--color-brand-base) 0.360 0.013 h);
+  --color-neutral-900: oklch(from var(--color-brand-base) 0.255 0.012 h);
+
+  /* --- Color: brand ramp (derived from --color-brand-base) ------------ *
+   * Keeps the base hue (h); spreads lightness AROUND the base with calc(l ± x)
+   * so 500 is always the base and the ramp stays ordered for any base; eases
+   * chroma toward the extremes with calc(c * f). Tuned for a mid-lightness
+   * brand — for an unusually light/dark base, nudge the offsets. */
+  --color-brand-50:  oklch(from var(--color-brand-base) calc(l + 0.40) calc(c * 0.15) h);
+  --color-brand-100: oklch(from var(--color-brand-base) calc(l + 0.36) calc(c * 0.28) h);
+  --color-brand-200: oklch(from var(--color-brand-base) calc(l + 0.30) calc(c * 0.48) h);
+  --color-brand-300: oklch(from var(--color-brand-base) calc(l + 0.22) calc(c * 0.68) h);
+  --color-brand-400: oklch(from var(--color-brand-base) calc(l + 0.12) calc(c * 0.88) h);
+  --color-brand-500: var(--color-brand-base); /* the brand colour, as set above */
+  --color-brand-600: oklch(from var(--color-brand-base) calc(l - 0.06) calc(c * 0.98) h);
+  --color-brand-700: oklch(from var(--color-brand-base) calc(l - 0.13) calc(c * 0.86) h);
+  --color-brand-800: oklch(from var(--color-brand-base) calc(l - 0.20) calc(c * 0.70) h);
+  --color-brand-900: oklch(from var(--color-brand-base) calc(l - 0.27) calc(c * 0.52) h);
+
+  /* --- Color: status (oklch; equal lightness for even emphasis) ------- */
+  --color-success-500: oklch(0.62 0.15 150);
+  --color-warning-500: oklch(0.70 0.16 75);
+  --color-danger-500:  oklch(0.58 0.20 27);
+
+  /* --- Spacing scale (4px base at a 16px root) ----------------------- */
+  --space-3xs: 0.125rem; /*  2px */
+  --space-2xs: 0.25rem;  /*  4px */
+  --space-xs:  0.5rem;   /*  8px */
+  --space-sm:  0.75rem;  /* 12px */
+  --space-md:  1rem;     /* 16px */
+  --space-lg:  1.5rem;   /* 24px */
+  --space-xl:  2rem;     /* 32px */
+  --space-2xl: 3rem;     /* 48px */
+  --space-3xl: 4rem;     /* 64px */
+  --space-4xl: 6rem;     /* 96px */
+
+  /* --- Type: families (system stacks — no web fonts, no JS) ---------- */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* --- Type: size scale (~1.25 "major third" ratio) ------------------ */
+  --font-size-xs:   0.8rem;
+  --font-size-sm:   0.9rem;
+  --font-size-base: 1rem;
+  --font-size-md:   1.125rem;
+  --font-size-lg:   1.25rem;
+  --font-size-xl:   1.563rem;
+  --font-size-2xl:  1.953rem;
+  --font-size-3xl:  2.441rem;
+  --font-size-4xl:  3.052rem;
+
+  /* --- Type: weights & line heights ---------------------------------- */
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-bold:    700;
+  --line-height-tight:  1.2;
+  --line-height-snug:   1.4;
+  --line-height-normal: 1.6;
+
+  /* --- Radii & borders ----------------------------------------------- */
+  --radius-sm:   0.125rem;
+  --radius-md:   0.375rem;
+  --radius-lg:   0.75rem;
+  --radius-full: 9999px;
+  --border-width:       1px;
+  --border-width-thick: 2px;
+
+  /* --- Elevation (shadows) ------------------------------------------- */
+  --shadow-color: 0 0 0; /* oklch L C H of the shadow; alpha added per level */
+  --shadow-sm: 0 1px 2px oklch(var(--shadow-color) / 0.06);
+  --shadow-md: 0 2px 8px oklch(var(--shadow-color) / 0.10);
+  --shadow-lg: 0 8px 24px oklch(var(--shadow-color) / 0.12);
+  /* Branded elevation — coral glow; follows --color-brand-base. */
+  --shadow-brand: 0 -20px 20px var(--color-brand-800), 0 5px 20px 5px var(--color-brand-200);
+
+  /* --- Z-index scale ------------------------------------------------- */
+  --z-base:     0;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+
+  /* --- Motion -------------------------------------------------------- */
+  --duration-fast:   120ms;
+  --duration-normal: 240ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* --- Layout -------------------------------------------------------- */
+  --measure:       65ch;  /* ideal line length for body text */
+  --container-max: 72rem; /* page max width */
+
+  /* --- Breakpoints — REFERENCE ONLY ---------------------------------- *
+   * Custom properties CANNOT be used inside @media conditions, so you must
+   * write the literal in each media query. These are the canonical values:
+   *   sm: 40em  (640px)   md: 48em  (768px)
+   *   lg: 64em  (1024px)  xl: 80em  (1280px)
+   * ------------------------------------------------------------------- */
+
+  /* =====================================================================
+   * 2. SEMANTIC — map primitives to roles. USE THESE in components.
+   *
+   * light-dark() picks the first value under a light color-scheme, the second
+   * under dark. color-scheme below makes the page follow the OS preference; the
+   * html[data-theme] rules at the bottom let a toggle force one (set the JS to
+   * flip data-theme — pure CSS can't read a button).
+   * ================================================================== */
+  color-scheme: light dark;
+
+  /* Color roles */
+  --color-background:     light-dark(var(--color-white),        var(--color-neutral-900));
+  --color-surface:        light-dark(var(--color-neutral-50),   var(--color-neutral-800));
+  --color-surface-raised: light-dark(var(--color-white),        var(--color-neutral-700));
+  --color-text:           light-dark(var(--color-neutral-900),  var(--color-neutral-100));
+  --color-text-muted:     light-dark(var(--color-neutral-700),  var(--color-neutral-400));
+  --color-text-inverse:   light-dark(var(--color-neutral-50),   var(--color-neutral-900));
+  --color-border:         light-dark(var(--color-neutral-300),  var(--color-neutral-700));
+  --color-brand:          var(--color-brand-500);
+  --color-brand-contrast: var(--color-white);
+  --color-link:           light-dark(var(--color-brand-600), var(--color-brand-300));
+  --color-link-hover:     light-dark(var(--color-brand-700), var(--color-brand-200));
+  --color-focus-ring:     var(--color-brand-500);
+
+  /* Derived roles (modern colour functions, not hand-picked) */
+  /* Relative colour: a translucent brand wash for focus glows / hover fills. */
+  --color-brand-weak: oklch(from var(--color-brand-500) l c h / 0.15);
+  /* color-mix: a hairline that adapts to whatever text colour is in scope. */
+  --color-border-subtle: color-mix(in oklab, currentColor 12%, transparent);
+
+  /* Typography roles */
+  --font-body:         var(--font-sans);
+  --font-heading:      var(--font-sans);
+  --font-size-body:    var(--font-size-base);
+  --line-height-body:  var(--line-height-normal);
+
+  /* Spacing roles (handy aliases for layout) */
+  --space-gutter:  var(--space-md);  /* inline padding inside containers */
+  --space-stack:   var(--space-md);  /* default vertical rhythm */
+  --space-section: var(--space-3xl); /* gap between page sections */
+
+  /* Focus ring (accessibility) */
+  --focus-ring: var(--border-width-thick) solid var(--color-focus-ring);
+}
+
+/*
+ * Theme toggle hooks. A toggle's JS sets data-theme on <html>; these force the
+ * color-scheme (and therefore every light-dark() above) without redefining a
+ * single colour. Components that must never theme can set `color-scheme: light`
+ * (or dark) locally — e.g. a hero with a fixed background image.
+ */
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/*
+ * High-contrast mode (user setting). A light-touch remap of a few SEMANTIC
+ * colour roles when the OS asks for more contrast — components are untouched,
+ * which is the whole point of the two tiers. Still uses light-dark(), so it
+ * sharpens both light and dark themes:
+ *   - text/background go to pure black/white (max legibility),
+ *   - muted text and borders go full-strength (no low-contrast greys),
+ *   - links and the focus ring get stronger,
+ *   - shadows are dropped — depth cues don't read in high contrast, so borders
+ *     carry the structure instead.
+ * (Windows "forced colors" mode is handled by the browser via system colours,
+ * so it needs no override here.)
+ */
+@media (prefers-contrast: more) {
+  :root {
+    --color-background:  light-dark(var(--color-white),         var(--color-black));
+    --color-surface:     light-dark(var(--color-white),         var(--color-black));
+    --color-text:        light-dark(var(--color-black),         var(--color-white));
+    --color-text-muted:  light-dark(var(--color-neutral-900),   var(--color-neutral-50));
+    --color-border:      light-dark(var(--color-neutral-900),   var(--color-neutral-50));
+    --color-link:        light-dark(var(--color-brand-800),     var(--color-brand-100));
+    --color-link-hover:  light-dark(var(--color-brand-900),     var(--color-brand-50));
+    --color-focus-ring:  light-dark(var(--color-black),         var(--color-white));
+
+    /* Drop elevation — anything using var(--shadow-*) loses its shadow. */
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-brand: none;
+  }
+}

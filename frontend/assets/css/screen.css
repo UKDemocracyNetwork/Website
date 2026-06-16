@@ -1,0 +1,215 @@
+/*
+ * Site styles — source of truth. Native CSS, no SASS.
+ *
+ * `make build` copies this file VERBATIM into Ghost's theme (theme/assets/),
+ * which is the only engine that needs a copy (its theme asset path is fixed).
+ * The Starlette/Lambda app serves this frontend/assets/ dir directly at /static/.
+ * Edit here, never the Ghost copy. A post-processor (e.g. PostCSS) can be added to
+ * the build later without changing how engines reference the file.
+ *
+ * Design tokens live in tokens.css and are imported below. Style with the
+ * SEMANTIC tokens (var(--color-text), var(--space-md), ...), not raw primitives.
+ */
+
+/* @imports must come before any style rules. Order: tokens (definitions), then
+ * reset (normalize), then author styles below. */
+@import url("tokens.css");
+@import url("reset.css");
+
+
+/* =====================================================================
+ * BASE LAYER — token-driven defaults for raw HTML elements.
+ * Element selectors only (low specificity) so your component styles and
+ * the rules further down win without !important. Everything references
+ * SEMANTIC tokens, so light/dark and a rebrand flow through automatically.
+ * ================================================================== */
+
+/* Page — background on <html> so it fills the viewport behind any centred,
+   max-width body. color/font inherit down from here. */
+html {
+  background: var(--color-background);
+  color: var(--color-text);
+  accent-color: var(--color-brand-500);
+}
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+
+/* Vertical rhythm — the reset stripped default margins; add them back. */
+:is(p, ul, ol, dl, blockquote, pre, table, figure, fieldset, details) {
+  margin-block: var(--space-md);
+}
+:is(h1, h2, h3, h4, h5, h6) {
+  margin-block: var(--space-xl) var(--space-sm);
+  font-family: var(--font-heading);
+  line-height: var(--line-height-tight);
+}
+main > :first-child { margin-block-start: 0; }
+
+/* Heading type scale */
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-xl); }
+h4 { font-size: var(--font-size-lg); }
+h5 { font-size: var(--font-size-md); }
+h6 { font-size: var(--font-size-base); }
+
+/* Links — unclassed only; the reset hands classed links to components. */
+a:not([class]) {
+  color: var(--color-link);
+  text-underline-offset: 0.15em;
+}
+a:not([class]):hover {
+  color: var(--color-link-hover);
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-brand-200);
+}
+
+/* Code & preformatted */
+:is(code, kbd, samp, pre) {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+:not(pre) > code,
+kbd {
+  padding: 0.1em 0.3em;
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+}
+pre {
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+}
+
+/* Quotes */
+blockquote {
+  padding-inline-start: var(--space-md);
+  border-inline-start: var(--border-width-thick) solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-block-start: var(--border-width) solid var(--color-border);
+  margin-block: var(--space-xl);
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+caption {
+  margin-block-end: var(--space-xs);
+  color: var(--color-text-muted);
+  text-align: start;
+}
+:is(th, td) {
+  padding: var(--space-xs) var(--space-sm);
+  border: var(--border-width) solid var(--color-border);
+  text-align: start;
+}
+thead th {
+  background: var(--color-surface);
+}
+
+/* Forms */
+fieldset {
+  padding: var(--space-md);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+legend {
+  padding-inline: var(--space-xs);
+  font-weight: var(--font-weight-medium);
+}
+label {
+  font-weight: var(--font-weight-medium);
+}
+:is(input, textarea, select) {
+  padding: var(--space-2xs) var(--space-xs);
+  background: var(--color-background);
+  color: var(--color-text);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+/* These types shouldn't get the text-field box treatment. */
+:is([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"]) {
+  padding: 0;
+  border: 0;
+}
+:is(input, textarea, select, button):disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Buttons — bare <button>; classed buttons are components. */
+button {
+  padding: var(--space-2xs) var(--space-md);
+  background: var(--color-brand-500);
+  color: var(--color-brand-contrast);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+button:hover:not(:disabled) {
+  background: var(--color-brand-600);
+}
+
+/* Disclosure */
+details {
+  padding: var(--space-sm) var(--space-md);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+summary {
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────
+ * YOUR STYLES — these come after the base layer, so they override it.
+ * ─────────────────────────────────────────────────────────────────── */
+
+body {
+	margin: 0 auto;
+	width: auto;
+	max-width: 900px;
+}
+
+.prose {
+       max-width: var(--measure);
+}       
+
+h1 {
+	color: var(--color-brand-500);
+}
+
+
+.card {
+	border-radius: 5px;
+	border: 2px solid var(--color-brand-200);
+	box-shadow: var(--shadow-brand);
+	padding: 1em;
+	margin:3em 0; 
+}

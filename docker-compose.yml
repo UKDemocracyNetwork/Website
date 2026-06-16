@@ -32,6 +32,11 @@ services:
       database__connection__database: ghost
     volumes:
       - ./theme:/var/lib/ghost/content/themes/dn-theme
+      # Dev hot-reload: serve assets straight from source so editing
+      # frontend/assets/** is live on a browser refresh — no `make build`, no
+      # rebuild. This shadows the built theme/assets/ copy (identical content).
+      # In prod the image's baked-in theme/assets/ is used instead.
+      - ./frontend/assets:/var/lib/ghost/content/themes/dn-theme/assets:ro
       - ghost_content:/var/lib/ghost/content
 
   nginx:

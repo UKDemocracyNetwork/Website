@@ -5,7 +5,7 @@ DOMAIN ?= website.dn.womblelabs.co.uk
 IMAGE_TAG ?= latest
 
 .PHONY: help install dev dev-stop dev-logs dev-build dev-clean \
-        lint format test synth deploy-dev new-env smoke
+        build check-build watch lint format test synth deploy-dev new-env smoke
 
 help:
 	@echo "Local dev"
@@ -15,7 +15,9 @@ help:
 	@echo "  dev-logs   Tail Ghost logs"
 	@echo "  dev-build  Rebuild Docker images (run after Dockerfile/theme changes)"
 	@echo "  dev-clean  Remove containers, volumes, and local images"
-	@echo "  lint       Run ruff check"
+	@echo "  build      Regenerate templates + assets (CSS) from frontend/ source"
+	@echo "  watch      Rebuild frontend on save; theme is bind-mounted so just refresh"
+	@echo "  lint       Run ruff check + frontend build drift check"
 	@echo "  format     Run ruff format (auto-fix)"
 	@echo "  test       Run pytest"
 	@echo ""
@@ -47,9 +49,19 @@ dev-build:
 dev-clean:
 	docker compose down -v --rmi local
 
+build:
+	uv run python frontend/build.py
+
+check-build:
+	uv run python frontend/build.py --check
+
+watch:
+	uv run python frontend/watch.py
+
 lint:
 	uv run ruff check .
 	uv run ruff format --check .
+	uv run python frontend/build.py --check
 
 format:
 	uv run ruff format .
