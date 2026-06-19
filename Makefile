@@ -5,7 +5,7 @@ DOMAIN ?= website.dn.womblelabs.co.uk
 IMAGE_TAG ?= latest
 
 .PHONY: help install dev dev-stop dev-logs dev-build dev-clean \
-        build check-build watch lint format test synth deploy-dev new-env smoke
+        build check-build watch lint format test synth deploy-dev new-env smoke import-medium
 
 help:
 	@echo "Local dev"
@@ -26,6 +26,7 @@ help:
 	@echo "  synth      Synthesise CloudFormation templates"
 	@echo "  deploy-dev Deploy all stacks to dev account"
 	@echo "  smoke      Run smoke tests against URL=<url>"
+	@echo "  import-medium  Import a Medium export into Ghost (ZIP=... ARGS=...)"
 
 install:
 	uv sync --all-groups
@@ -78,6 +79,12 @@ deploy-dev:
 
 new-env:
 	uv run python scripts/new_env.py
+
+# Import a Medium export into Ghost. Needs GHOST_API_URL + GHOST_ADMIN_API_KEY in
+# the env (a Ghost custom-integration Admin key). Override ZIP and pass ARGS, e.g.
+#   make import-medium ZIP=~/Downloads/medium-export.zip ARGS="--dry-run"
+import-medium:
+	uv run --group migrate python scripts/import_medium.py --zip "$(ZIP)" $(ARGS)
 
 smoke:
 	SMOKE_URL=$(URL) uv run pytest tests/smoke/ -v

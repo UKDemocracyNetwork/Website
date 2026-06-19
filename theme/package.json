@@ -6,5 +6,8 @@
     "ghost": ">=5.0.0"
   },
   "license": "MIT",
-  "keywords": ["ghost-theme"]
+  "keywords": ["ghost-theme"],
+  "config": {
+    "posts_per_page": 15
+  }
 }

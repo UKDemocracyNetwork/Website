@@ -1,0 +1,26 @@
+# Ghost routing. Committed to Git (golden thread) and applied to Ghost by
+# `scripts/import_medium.py` (uploaded via the Admin API: `make ghost-routes`).
+#
+# Bulletin posts live at /bulletin/<slug>/. Ghost assigns each post to the FIRST
+# matching collection, so the filtered /bulletin/ collection must come before the
+# catch-all "/". Every imported post carries the public "Bulletin" tag, so they
+# all fall under /bulletin/; anything untagged stays at /<slug>/.
+
+routes:
+  # CSS test bed / kitchen sink (theme/styleguide.hbs).
+  /styleguide/: styleguide
+
+collections:
+  /bulletin/:
+    permalink: /bulletin/{slug}/
+    filter: tag:bulletin
+    template:
+      - bulletins
+  /:
+    permalink: /{slug}/
+    template:
+      - bulletins
+
+taxonomies:
+  tag: /tag/{slug}/
+  author: /author/{slug}/

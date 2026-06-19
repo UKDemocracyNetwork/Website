@@ -1,0 +1,74 @@
+{{!< default}}
+
+<h2>Who we are</h2>
+<p>We are a network of democracy practitioners, organisers, researchers and professionals committed to developing and
+  defending democratic society.</p>
+
+<h2>What we do</h2>
+<p>The Democracy Network connects, strengthens and champions a dynamic network of people and civil society organisations
+  working to strengthen and advance democracy in the UK.</p>
+
+<div class="grid-container">
+  <div class="grid">
+    <div class="card">
+      <header>
+        <h2>Networking</h2>
+      </header>
+      <div class="card-body">
+        <p>We build spaces and opportunities for democracy practitioners to learn from each other, build trust and
+          develop
+          strategies together.</p>
+      </div>
+    </div>
+    <div class="card">
+      <header>
+        <h3>Ecosystem</h3>
+      </header>
+      <div class="card-body">
+        <p>
+          We provide access to shared resources, skills and intelligence
+
+          More asset based approach etc, hubs stuff
+        </p></div>
+    </div>
+    <div class="card">
+      <header>
+        <h3>Infrastructure</h3>
+      </header>
+      <div class="card-body">
+        <p>We provide access to a shared information layer, combining resources, skills and intelligence - through which
+          people
+          working to strengthen democracy can better develop a sense of the field, their role and opportunities within
+          it.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{#get "posts" limit="1" as |latest|}}
+  {{#foreach latest}}
+    <section class="latest-post" aria-label="Latest bulletin">
+      <h2>Latest bulletins</h2>
+      {{> "bulletin-card"}}
+    </section>
+  {{/foreach}}
+{{/get}}
+<div class="grid-container">
+  <div class="grid">
+    {{#get "posts" limit="4" offset="1" as |latest|}}
+      {{#foreach latest}}
+        {{#unless @first}}
+          {{> "bulletin-card"}}
+        {{/unless}}
+      {{/foreach}}
+    {{/get}}
+
+  </div>
+</div>
+
+<p><a href="/bulletin/">See all bulletins →</a></p>
+
+<h2>Services and resources</h2>
+
+<p>UK Democracy Map    -   Jobs Board  -   Democracy Funders   -    Resources</p>

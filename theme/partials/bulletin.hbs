@@ -1,0 +1,12 @@
+{{!-- A single bulletin — EDIT THIS for the single-post layout.
+     Rendered by post.hbs (Ghost requires the post template to be named post.hbs,
+     so it's a thin wrapper that includes this partial). --}}
+<article>
+    <header>
+        <h1>{{title}}</h1>
+        <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time>
+    </header>
+    <section class="prose">
+        {{content}}
+    </section>
+</article>

@@ -71,7 +71,7 @@ TARGETS: list[Target] = [
         bindings={
             "meta_title": "{{meta_title}}",
             "head": "{{ghost_head}}",
-            "stylesheet_href": '{{asset "css/screen.css"}}',
+            "stylesheet_href": '{{asset "css/base.css"}}',
             "site_url": "{{@site.url}}",
             "site_title": "{{@site.title}}",
             "body": "{{{body}}}",
@@ -86,7 +86,7 @@ TARGETS: list[Target] = [
         bindings={
             "meta_title": "{{ meta_title }}",
             "head": "{% block head %}{% endblock %}",
-            "stylesheet_href": "/static/css/screen.css",
+            "stylesheet_href": "/static/css/base.css",
             "site_url": "{{ site_url }}",
             "site_title": "{{ site_title }}",
             "body": "{% block content %}{% endblock %}",

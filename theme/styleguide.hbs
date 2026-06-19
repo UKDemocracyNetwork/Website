@@ -1,0 +1,328 @@
+{{!< default}}
+
+{{!--
+    Element & typography test page ("kitchen sink") for building out the CSS.
+    Plain semantic HTML so it doubles as a portable reference. Exactly ONE <h1>
+    (the page title) to honour the accessibility baseline; the headings section
+    below demonstrates h2–h6 as live headings.
+--}}
+
+<h1>Kitchen Sink — element &amp; typography test</h1>
+
+<p>This page exists to exercise the stylesheet while it is being built. It
+collects the common HTML elements on a single page so styling regressions are
+easy to spot. It is not the real homepage.</p>
+
+<p>A paragraph of <a href="#">inline elements</a> for testing runs of text:
+<strong>strong importance</strong>, <b>bold</b>, <em>emphasis</em>, <i>italic</i>,
+<u>underline</u>, <s>struck through</s>, <del>deleted</del> and <ins>inserted</ins>
+text, <mark>highlighted</mark>, <small>small print</small>, H<sub>2</sub>O and
+E=mc<sup>2</sup>, the abbreviation <abbr title="Cascading Style Sheets">CSS</abbr>,
+inline <code>code()</code>, the key <kbd>Esc</kbd>, sample output <samp>OK</samp>,
+a variable <var>x</var>, a citation <cite>The Title</cite>, an inline quote
+<q>quoted text</q>, a <dfn>definition</dfn> term, and a <time datetime="2026-06-11">date</time>.</p>
+
+
+<div class=card>
+<p>This is a card</p>
+</div>
+
+<hr>
+
+<section aria-labelledby="headings-title">
+    <h2 id="headings-title">Headings</h2>
+    <p>The page <code>&lt;h1&gt;</code> is at the top. Levels two through six:</p>
+    <h2>Heading level 2</h2>
+    <h3>Heading level 3</h3>
+    <h4>Heading level 4</h4>
+    <h5>Heading level 5</h5>
+    <h6>Heading level 6</h6>
+</section>
+
+<hr>
+
+<section aria-labelledby="text-title">
+    <h2 id="text-title">Text blocks</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse.</p>
+    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+    deserunt mollit anim id est laborum. <a href="#">A longer link inside a
+    paragraph</a> to check wrapping and underline behaviour across line breaks.</p>
+
+    <blockquote cite="https://example.com">
+        <p>A blockquote: design is not just what it looks like and feels like.
+        Design is how it works.</p>
+        <footer>— <cite>Someone, somewhere</cite></footer>
+    </blockquote>
+
+    <figure>
+        <blockquote>
+            <p>A pull quote inside a figure, to test figure + blockquote
+            together.</p>
+        </blockquote>
+        <figcaption>Attribution in a <code>figcaption</code></figcaption>
+    </figure>
+</section>
+
+<hr>
+
+<section aria-labelledby="lists-title">
+    <h2 id="lists-title">Lists</h2>
+
+    <h3>Unordered (nested)</h3>
+    <ul>
+        <li>First item</li>
+        <li>Second item
+            <ul>
+                <li>Nested item</li>
+                <li>Nested item
+                    <ul>
+                        <li>Deeply nested item</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Third item</li>
+    </ul>
+
+    <h3>Ordered (nested)</h3>
+    <ol>
+        <li>First step</li>
+        <li>Second step
+            <ol>
+                <li>Sub-step one</li>
+                <li>Sub-step two</li>
+            </ol>
+        </li>
+        <li>Third step</li>
+    </ol>
+
+    <h3>Description list</h3>
+    <dl>
+        <dt>Term</dt>
+        <dd>Definition of the term.</dd>
+        <dt>Another term</dt>
+        <dd>Its definition.</dd>
+        <dd>A second definition for the same term.</dd>
+    </dl>
+
+    <h3>Unstyled list (<code>role="list"</code>, bullets removed by the reset)</h3>
+    <ul role="list">
+        <li>No marker</li>
+        <li>No marker</li>
+        <li>No marker</li>
+    </ul>
+</section>
+
+<hr>
+
+<section aria-labelledby="table-title">
+    <h2 id="table-title">Table</h2>
+    <table>
+        <caption>A table caption describing the data</caption>
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Role</th>
+                <th scope="col">Votes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Ada</th>
+                <td>Engineer</td>
+                <td>128</td>
+            </tr>
+            <tr>
+                <th scope="row">Grace</th>
+                <td>Admiral</td>
+                <td>256</td>
+            </tr>
+            <tr>
+                <th scope="row">Alan</th>
+                <td>Mathematician</td>
+                <td>512</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th scope="row" colspan="2">Total</th>
+                <td>896</td>
+            </tr>
+        </tfoot>
+    </table>
+</section>
+
+<hr>
+
+<section aria-labelledby="code-title">
+    <h2 id="code-title">Preformatted &amp; code</h2>
+    <pre><code>def greet(name: str) -&gt; str:
+    """A preformatted code block to test monospace and overflow."""
+    return f"Hello, {name}! This line is intentionally long to test horizontal scrolling behaviour."</code></pre>
+</section>
+
+<hr>
+
+<section aria-labelledby="media-title">
+    <h2 id="media-title">Media</h2>
+    <figure>
+        <img src="{{asset "img/placeholder.svg"}}" alt="A grey placeholder image, 640 by 360 pixels" width="640" height="360">
+        <figcaption>An image inside a <code>figure</code> with a
+        <code>figcaption</code>.</figcaption>
+    </figure>
+</section>
+
+<hr>
+
+<section aria-labelledby="forms-title">
+    <h2 id="forms-title">Forms</h2>
+    <form action="#" method="get">
+        <fieldset>
+            <legend>Text inputs</legend>
+            <p>
+                <label for="f-text">Text</label>
+                <input type="text" id="f-text" name="f-text" placeholder="Type here…">
+            </p>
+            <p>
+                <label for="f-email">Email (required)</label>
+                <input type="email" id="f-email" name="f-email" required placeholder="you@example.com">
+            </p>
+            <p>
+                <label for="f-password">Password</label>
+                <input type="password" id="f-password" name="f-password" autocomplete="new-password">
+            </p>
+            <p>
+                <label for="f-search">Search</label>
+                <input type="search" id="f-search" name="f-search">
+            </p>
+            <p>
+                <label for="f-number">Number</label>
+                <input type="number" id="f-number" name="f-number" min="0" max="10" step="1" value="3">
+            </p>
+            <p>
+                <label for="f-url">URL (disabled)</label>
+                <input type="url" id="f-url" name="f-url" value="https://example.com" disabled>
+            </p>
+            <p>
+                <label for="f-readonly">Read-only</label>
+                <input type="text" id="f-readonly" name="f-readonly" value="Can't edit me" readonly>
+            </p>
+            <p>
+                <label for="f-list">With datalist</label>
+                <input type="text" id="f-list" name="f-list" list="options">
+                <datalist id="options">
+                    <option value="Alpha"></option>
+                    <option value="Beta"></option>
+                    <option value="Gamma"></option>
+                </datalist>
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <legend>Date, range &amp; pickers</legend>
+            <p>
+                <label for="f-date">Date</label>
+                <input type="date" id="f-date" name="f-date">
+            </p>
+            <p>
+                <label for="f-time">Time</label>
+                <input type="time" id="f-time" name="f-time">
+            </p>
+            <p>
+                <label for="f-color">Colour</label>
+                <input type="color" id="f-color" name="f-color" value="#1c64f2">
+            </p>
+            <p>
+                <label for="f-range">Range</label>
+                <input type="range" id="f-range" name="f-range" min="0" max="100" value="50">
+            </p>
+            <p>
+                <label for="f-file">File</label>
+                <input type="file" id="f-file" name="f-file">
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <legend>Choices</legend>
+            <p>
+                <label for="f-select">Select</label>
+                <select id="f-select" name="f-select">
+                    <optgroup label="Group one">
+                        <option>First</option>
+                        <option>Second</option>
+                    </optgroup>
+                    <optgroup label="Group two">
+                        <option>Third</option>
+                        <option>Fourth</option>
+                    </optgroup>
+                </select>
+            </p>
+
+            <fieldset>
+                <legend>Radio buttons</legend>
+                <p>
+                    <input type="radio" id="r1" name="radios" value="1" checked>
+                    <label for="r1">Option one</label>
+                </p>
+                <p>
+                    <input type="radio" id="r2" name="radios" value="2">
+                    <label for="r2">Option two</label>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <legend>Checkboxes</legend>
+                <p>
+                    <input type="checkbox" id="c1" name="c1" checked>
+                    <label for="c1">Checked</label>
+                </p>
+                <p>
+                    <input type="checkbox" id="c2" name="c2">
+                    <label for="c2">Unchecked</label>
+                </p>
+                <p>
+                    <input type="checkbox" id="c3" name="c3" disabled>
+                    <label for="c3">Disabled</label>
+                </p>
+            </fieldset>
+        </fieldset>
+
+        <fieldset>
+            <legend>Textarea</legend>
+            <p>
+                <label for="f-textarea">Message</label>
+                <textarea id="f-textarea" name="f-textarea" placeholder="A textarea with no rows attribute (min-height comes from the reset)."></textarea>
+            </p>
+        </fieldset>
+
+        <p>
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+            <button type="button">Plain button</button>
+            <button type="button" disabled>Disabled</button>
+        </p>
+    </form>
+</section>
+
+<hr>
+
+<section aria-labelledby="interactive-title">
+    <h2 id="interactive-title">Interactive &amp; status</h2>
+
+    <details>
+        <summary>A <code>details</code> / <code>summary</code> disclosure</summary>
+        <p>Hidden content revealed on toggle — no JavaScript required.</p>
+    </details>
+
+    <p>
+        <label for="f-progress">Progress</label>
+        <progress id="f-progress" max="100" value="70">70%</progress>
+    </p>
+    <p>
+        <label for="f-meter">Meter</label>
+        <meter id="f-meter" min="0" max="100" low="33" high="66" optimum="90" value="80">80 out of 100</meter>
+    </p>
+</section>

@@ -37,6 +37,9 @@ services:
       # rebuild. This shadows the built theme/assets/ copy (identical content).
       # In prod the image's baked-in theme/assets/ is used instead.
       - ./frontend/assets:/var/lib/ghost/content/themes/dn-theme/assets:ro
+      # Routing config (e.g. /bulletin/<slug>/). Ghost reads this on boot; in dev
+      # it also hot-reloads on change. Baked into the image for deploys (Dockerfile).
+      - ./routes.yaml:/var/lib/ghost/content/settings/routes.yaml:ro
       - ghost_content:/var/lib/ghost/content
 
   nginx:

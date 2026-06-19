@@ -75,3 +75,6 @@ cdk.context.json
 
 # Claude Code local settings
 .claude/
+
+# Medium -> Ghost migration state (maps to per-environment Ghost post/image ids)
+.medium-import-state.json

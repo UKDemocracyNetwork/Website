@@ -1,12 +1,8 @@
 {{!< default}}
 
-<article>
-    <header>
-        <h1>{{title}}</h1>
-        <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time>
-    </header>
-
-    <section>
-        {{content}}
-    </section>
-</article>
+{{!-- Single bulletin. Ghost requires this file to be named post.hbs. {{#post}}
+     enters the post's data context (so {{title}}, {{content}} etc. resolve); the
+     editable layout lives in partials/bulletin.hbs — edit that, not this. --}}
+{{#post}}
+    {{> "bulletin"}}
+{{/post}}

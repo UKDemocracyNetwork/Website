@@ -1,0 +1,32 @@
+{{!< default}}
+
+{{!-- The bulletins listing — EDIT THIS for the /bulletin/ page. Wired up in
+     routes.yaml (the /bulletin/ and / collections use template: bulletins).
+     Shows all bulletins, newest first. --}}
+
+<h1>All bulletins</h1>
+{{#if posts}}
+<div class="post-list">
+    {{#foreach posts}}
+    <article class="post-card">
+        <h2 class="post-card__title"><a href="{{url}}">{{title}}</a></h2>
+      {{#if feature_image}}
+        <a class="post-card__image" href="{{url}}" tabindex="-1" aria-hidden="true">
+            <img src="{{feature_image}}" alt="{{feature_image_alt}}" loading="lazy">
+        </a>
+        {{/if}}
+        <p class="post-meta"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time></p>
+        {{#if custom_excerpt}}
+        <p>{{custom_excerpt}}</p>
+        {{else}}
+        <p>{{excerpt words="30"}}…</p>
+        {{/if}}
+        <a class="post-card__more" href="{{url}}">Read more<span class="visually-hidden"> of {{title}}</span> →</a>
+    </article>
+    {{/foreach}}
+</div>
+
+{{pagination}}
+{{else}}
+<p>No bulletins yet.</p>
+{{/if}}

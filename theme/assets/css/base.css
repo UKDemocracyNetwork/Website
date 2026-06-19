@@ -1,0 +1,14 @@
+@import url("tokens.css");
+@import url("reset.css");
+@import url("composition.css");
+
+html {
+  background: var(--color-background);
+  color: var(--color-text);
+  accent-color: var(--color-brand-500);
+}
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
