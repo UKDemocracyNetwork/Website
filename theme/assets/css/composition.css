@@ -50,6 +50,21 @@ body > header:after {
 
 body > header nav {
     margin-block: var(--space-lg);
+    justify-content: center;
+    display: flex;
+}
+
+body > header nav ul {
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: -0.5em;
+}
+
+body > header nav ul li {
+    flex: 1 0 max-content;
+    margin: 0 0.5em;
 }
 
 body > header nav a:not([class]) {
@@ -72,7 +87,7 @@ body > footer:before {
     background-position: top;
     content: "";
     position: absolute;
-    height:1em;
+    height: 1em;
 }
 
 .site-logo a:not([class]) {
@@ -253,6 +268,7 @@ article header > * + * {
     display: inline-block;
     margin-block-start: var(--flow-space);
 }
+
 .prose {
     max-width: var(--measure);
 
@@ -290,14 +306,15 @@ h1 {
     white-space: nowrap;
 }
 
-.post-list {
-    display: grid;
-    gap: var(--space-2xl);
-    margin-block: var(--space-xl);
+
+.post-card > * + * {
+    margin-block-start: var(--flow-space);
+    display: inline-block;
 }
 
 .post-card img {
-    border-radius: var(--radius-md);
+    aspect-ratio: 19/9;
+    object-fit: cover;
 }
 
 .post-meta {
@@ -445,7 +462,6 @@ h3 + blockquote {
     grid-template-columns: auto;
     background-size: 0;
 }
-
 
 
 .grid-container {
