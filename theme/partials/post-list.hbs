@@ -1,0 +1,17 @@
+{{!-- Post rows shared by the bulletin listing and tag/author archives. Sits under
+     the page h1, so titles are h2s. --}}
+<ul class="post-list" role="list">
+  {{#foreach posts}}
+    <li class="stretched">
+      <article>
+        <h2><a href="{{url}}">{{title}}</a></h2>
+        {{#if custom_excerpt}}
+          <p>{{custom_excerpt}}</p>
+        {{/if}}
+        <p class="post-meta"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time></p>
+      </article>
+    </li>
+  {{/foreach}}
+</ul>
+
+{{pagination}}

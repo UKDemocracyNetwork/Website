@@ -69,7 +69,7 @@ format:
 	uv run ruff check --fix .
 
 test:
-	uv run pytest tests/ -v
+	uv run pytest tests/ --ignore=tests/smoke -v
 
 synth:
 	cdk synth -c domain=$(DOMAIN)

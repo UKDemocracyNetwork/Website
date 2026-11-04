@@ -1,0 +1,561 @@
+/*
+ * Wireframe stylesheet: shows function, not form. Branding comes later.
+ *
+ * Black on white, system fonts, square corners. Keep this file small: layout,
+ * reading typography and clear controls only.
+ *
+ * Accessibility targets follow the TetraLogical Accessible Components Library:
+ * https://tetralogical.com/resources/accessible-components-library/requirements/
+ */
+
+/* Foundations -------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: #000;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 2em 0 0.5em;
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+  line-height: 1.1;
+}
+h2 {
+  font-size: 1.75rem;
+}
+h3 {
+  font-size: 1.375rem;
+}
+h4 {
+  font-size: 1.125rem;
+}
+h5,
+h6 {
+  font-size: 1rem;
+}
+
+p,
+ul,
+ol,
+dl,
+blockquote,
+pre,
+table,
+figure {
+  margin: 0 0 1.25em;
+}
+
+p,
+li,
+dd {
+  max-width: 68ch;
+  text-wrap: pretty;
+}
+
+ul,
+ol {
+  padding-left: 1.5em;
+}
+
+li + li {
+  margin-top: 0.5em;
+}
+
+li > ul,
+li > ol {
+  margin: 0.5em 0 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  text-decoration-thickness: 0.2em;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* If an image fails to load, set its alt text apart from the surrounding copy. */
+img {
+  font-style: italic;
+  text-align: center;
+}
+
+hr {
+  margin: 2.5em 0;
+  border: 0;
+  border-top: 2px solid;
+}
+
+blockquote {
+  max-width: 68ch;
+  padding-left: 1em;
+  border-left: 4px solid;
+}
+
+blockquote > :last-child,
+figure > :last-child,
+li > :last-child {
+  margin-bottom: 0;
+}
+
+figcaption {
+  max-width: 68ch;
+  margin-top: 0.5em;
+  font-size: 0.875em;
+  line-height: 1.4;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+
+pre {
+  overflow-x: auto;
+  padding: 1em;
+  border: 2px solid;
+}
+
+table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scroll a wrapper, not the table: changing a table's display can drop its semantics. */
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 1.25em;
+}
+
+.table-container table {
+  margin-bottom: 0;
+}
+
+th,
+td {
+  padding: 0.5em 0.75em;
+  border: 2px solid;
+  text-align: left;
+  vertical-align: top;
+}
+
+/* Focus: 3px outline, offset, with a contrasting ring so it shows on any fill. */
+:focus-visible {
+  outline: 3px solid #000;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px #fff;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Page frame --------------------------------------------------------------- */
+
+.skip-link {
+  position: absolute;
+  top: -100vh;
+  left: 1rem;
+  z-index: 1;
+  padding: 0.5rem 1rem;
+  border: 2px solid;
+  background: #fff;
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+header[role="banner"],
+main,
+body > footer {
+  width: min(100% - 2rem, 72rem);
+  margin-inline: auto;
+}
+
+header[role="banner"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-block: 0.75rem;
+  border-bottom: 2px solid;
+}
+
+main {
+  padding-block: 3rem;
+}
+
+body > footer {
+  padding-block: 1.5rem;
+  border-top: 2px solid;
+}
+
+body > footer p {
+  margin: 0;
+}
+
+.site-title,
+nav[aria-label="Site navigation"] a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.site-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+nav[aria-label="Site navigation"] ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav[aria-label="Site navigation"] li {
+  margin: 0;
+}
+
+/* Controls ----------------------------------------------------------------- */
+
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.5em 1.25em;
+  border: 2px solid #000;
+  border-radius: 0;
+  background: #000;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button:hover,
+.button:hover {
+  background: #fff;
+  color: #000;
+}
+
+.button--secondary {
+  background: #fff;
+  color: #000;
+}
+
+.button--secondary:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* TetraLogical "Text input" pattern. */
+label {
+  display: block;
+  font-weight: 700;
+}
+
+.hint {
+  margin: 0 0 0.5em;
+}
+
+input:not([type="checkbox"], [type="radio"]),
+textarea,
+select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5em;
+  border: 2px solid #000;
+  border-radius: 0;
+  background: #fff;
+  color: #000;
+  font: inherit;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline-width: 5px;
+  outline-offset: 0;
+  box-shadow: inset 0 0 0 2px #000;
+}
+
+/* TetraLogical "Pagination" pattern; Ghost gives us previous/next, not a page list. */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid;
+}
+
+.pagination p {
+  margin: 0;
+}
+
+/* Signup: Ghost's members script toggles .loading, .success and .error. */
+.signup {
+  max-width: 34rem;
+  margin-block: 2rem 3rem;
+  padding: 1.5rem;
+  border: 2px solid;
+}
+
+.signup__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.signup__row input {
+  flex: 1 1 14rem;
+  width: auto;
+}
+
+.signup__message {
+  display: none;
+  margin: 1em 0 0;
+  font-weight: 700;
+}
+
+.signup.loading .signup__message--loading,
+.signup.success .signup__message--success,
+.signup.error .signup__message--error {
+  display: block;
+}
+
+/* Bulletin cards and lists -------------------------------------------------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: 1.5rem;
+  margin: 0 0 2rem;
+  padding: 0;
+  list-style: none;
+}
+
+/* More space between tappable cards in one column, so scrolling doesn't open one. */
+@media (max-width: 25rem) {
+  .cards {
+    gap: 3rem;
+  }
+}
+
+.cards > li {
+  max-width: none;
+  margin: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.25rem;
+  border: 2px solid;
+}
+
+.card .post-meta {
+  margin-top: auto;
+}
+
+/*
+ * Whole-block links (Inclusive Components, "Cards"). The heading link stays the only
+ * link and tab stop, so its name is just the title; ::after stretches its clickable
+ * area over the block. Trade-off: text inside the block can't be selected.
+ */
+.stretched {
+  position: relative;
+}
+
+.stretched :is(h2, h3) a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.stretched:hover {
+  outline: 4px solid #000;
+  outline-offset: -2px;
+}
+
+/* Kept apart from :hover: a browser without :has() drops only this block and the
+   link keeps its own focus style. */
+.stretched:has(a:focus-visible) {
+  outline: 3px solid #000;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px #fff;
+}
+
+.stretched:has(a:focus-visible) a:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.card > :first-child {
+  margin-top: 0;
+}
+
+.card > :last-child {
+  margin-bottom: 0;
+}
+
+.card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 1em;
+  object-fit: contain; /* Many bulletin images contain text, so never crop them. */
+}
+
+.post-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post-list > li {
+  max-width: none;
+  margin: 0;
+  padding-block: 1.5rem;
+  border-top: 2px solid;
+}
+
+/* Rows already have rules between them: on hover the thicker title underline is enough. */
+.post-list > li:hover {
+  outline: none;
+}
+
+.post-list h2 {
+  margin: 0 0 0.25em;
+  font-size: 1.5rem;
+}
+
+.post-meta {
+  font-size: 0.875em;
+}
+
+.post-list p {
+  margin-bottom: 0.25em;
+}
+
+/* Article ------------------------------------------------------------------ */
+
+.article {
+  max-width: 68ch;
+}
+
+.article__back {
+  margin-bottom: 2rem;
+}
+
+.article__header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid;
+}
+
+.article__header h1 {
+  margin-bottom: 0.5em;
+}
+
+.article__header p {
+  margin: 0;
+}
+
+.article__feature {
+  margin-bottom: 2.5rem;
+}
+
+.prose {
+  font-size: 1.1875rem;
+  line-height: 1.65;
+  hanging-punctuation: first;
+}
+
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  margin-top: 2.25em;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose h2 + p,
+.prose h3 + p,
+.prose h4 + p {
+  margin-top: 0;
+}
+
+.prose figure {
+  margin-block: 2em;
+}
+
+/* Ghost requires these editor width classes; the wireframe keeps a single column. */
+.kg-width-wide,
+.kg-width-full {
+  max-width: 100%;
+}

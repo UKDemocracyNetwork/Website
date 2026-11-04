@@ -1,0 +1,19 @@
+{{!-- Newsletter signup: TetraLogical "Text input" pattern on a native form.
+     Ghost's members script (added by ghost_head) submits it and sets the
+     .loading, .success or .error class on the form. --}}
+{{#if @site.members_enabled}}
+<form class="signup" data-members-form="subscribe">
+  <label for="signup-email">Email address</label>
+  <p class="hint" id="signup-email-hint">Get the UK Democracy Bulletin by email each month.</p>
+  <div class="signup__row">
+    <input id="signup-email" type="email" autocomplete="email" required
+           aria-describedby="signup-email-hint" data-members-email>
+    <button type="submit">Subscribe</button>
+  </div>
+  <div role="status" aria-live="polite">
+    <p class="signup__message signup__message--loading">Sending…</p>
+    <p class="signup__message signup__message--success">Check your inbox for a link to confirm your subscription.</p>
+    <p class="signup__message signup__message--error"><span class="visually-hidden">Error: </span>Sorry, that didn't work. Please try again.</p>
+  </div>
+</form>
+{{/if}}

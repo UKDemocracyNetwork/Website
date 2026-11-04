@@ -61,44 +61,18 @@ not a design choice. When a post-processor (e.g. PostCSS) is added later, it wil
 produce a transformed build output that both engines consume — at that point
 Lambda would serve the build output instead of the raw source. Today it is raw.
 
-## CSS structure & design tokens
+## CSS
 
-Pure CSS (no SASS). Files under `frontend/assets/css/`:
+The theme is deliberately a wireframe until an external designer supplies the
+branding: it shows function, not form. There is one pure CSS file,
+`frontend/assets/css/screen.css`: black on white with full-colour images, system
+fonts, square corners, reading typography and clear controls. `make build` copies it
+into Ghost's theme.
 
-- `tokens.css` — the design system. CSS custom properties in two tiers:
-  - **Primitives** (`--color-neutral-500`, `--color-brand-500`, `--space-md`,
-    `--font-size-lg`): raw, context-free values. Don't use these directly in
-    components.
-  - **Semantic** (`--color-text`, `--color-link`, `--space-gutter`): roles that map
-    to primitives. **Style components with these.** A rebrand or theme change is
-    then just a remap of the semantic layer — components never change.
-  - **Colours** follow Kevin Powell's modern-CSS-colours guides
-    (https://piccalil.li/blog/a-pragmatic-guide-to-modern-css-colours-part-one/):
-    the palette is `oklch()` (perceptually uniform, wide-gamut) but you set just
-    **one hex** — `--color-brand-base`. `--color-brand-500` *is* that hex; the rest
-    of the brand ramp and the neutrals derive from it with relative colour
-    (`oklch(from var(--color-brand-base) …)`), so a rebrand is a single hex edit.
-    Theming uses `light-dark()` + `color-scheme` (no parallel `@media` block); it
-    follows the OS by default, and `<html data-theme="light|dark">` forces one for a
-    toggle. Other derived roles use relative colour and `color-mix()`.
-- `reset.css` — Andy Bell's "A (more) Modern CSS Reset"
-  (https://piccalil.li/blog/a-more-modern-css-reset/), kept close to upstream and
-  token-free so it's easy to re-diff against the source.
-- `screen.css` — the entry stylesheet the shell links. It `@import`s `tokens.css`
-  then `reset.css` (imports must precede style rules), then holds the actual styles.
-
-Add a new CSS file by dropping it in `frontend/assets/css/` and `@import`ing it
-near the top of `screen.css` (all `@import`s must precede style rules). `make build`
-copies the whole `css/` dir into Ghost's theme; the relative `@import` URL resolves
-under both `/assets/` (Ghost) and `/static/` (Lambda).
-
-> Caveat: `@import`ed files don't get Ghost's `{{asset}}` `?v=` cache-bust, so a
-> CDN could serve a stale `tokens.css` after a token-only change until invalidation.
-> The future PostCSS step will inline `@import`s into one cache-busted bundle. In
-> local dev it's a non-issue (`max-age=0`).
-
-Breakpoint values can't be tokens (custom properties don't work inside `@media`
-conditions) — `tokens.css` lists the canonical values as a comment to copy.
+Components follow the TetraLogical Accessible Components Library where it has a
+pattern (https://tetralogical.com/resources/accessible-components-library/):
+text input (`theme/partials/signup.hbs`) and pagination
+(`theme/partials/pagination.hbs`).
 
 ## Workflow
 

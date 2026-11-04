@@ -120,8 +120,9 @@ a variable <var>x</var>, a citation <cite>The Title</cite>, an inline quote
 
 <section aria-labelledby="table-title">
     <h2 id="table-title">Table</h2>
+    <div class="table-container" tabindex="0" role="group" aria-labelledby="table-caption">
     <table>
-        <caption>A table caption describing the data</caption>
+        <caption id="table-caption">A table caption describing the data</caption>
         <thead>
             <tr>
                 <th scope="col">Name</th>
@@ -153,6 +154,7 @@ a variable <var>x</var>, a citation <cite>The Title</cite>, an inline quote
             </tr>
         </tfoot>
     </table>
+    </div>
 </section>
 
 <hr>
