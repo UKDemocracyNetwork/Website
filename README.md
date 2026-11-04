@@ -4,12 +4,11 @@ Ghost CMS deployed on AWS, managed with Python CDK.
 
 ## Architecture
 
-- **Ghost 5** on ECS Fargate (Alpine), behind an Application Load Balancer
-- **RDS MySQL 8.0** in isolated subnets
-- **CloudFront** for HTTPS termination and caching
-- **S3** for media uploads
+- **Ghost 6**, **MySQL 8.4** and **nginx** in Docker on one **Lightsail** server (`deploy/compose.yml`)
+- Uploads and the database live on Docker volumes on that server, covered by daily Lightsail snapshots
+- **CloudFront** for HTTPS termination and caching. The server's web port only accepts CloudFront's IP ranges
 - **Route 53** for DNS
-- Six CDK stacks: `EcrStack`, `NetworkStack`, `DatabaseStack`, `AppStack`, `CertStack`, `CdnStack`
+- Five CDK stacks: `EcrStack`, `NetworkStack` (DNS zone), `LightsailStack`, `CertStack`, `CdnStack`
 
 Dev and prod are separate AWS accounts. The same Docker image is built once, deployed to dev, smoke-tested, then promoted to prod after approval.
 
@@ -32,23 +31,44 @@ On first run, visit `http://localhost:8080/ghost/` to complete Ghost setup, then
 
 - AWS CLI configured for the target account
 - CDK bootstrapped: `cdk bootstrap aws://ACCOUNT/eu-west-2` and `cdk bootstrap aws://ACCOUNT/us-east-1`
-- SSM parameters written (run once per account): `make new-env`
-- Ghost image pushed to ECR
+- GitHub OIDC role created (run once per account): `uv run python scripts/setup_oidc.py`
 
-### Deploy all stacks
-
-```bash
-make deploy-dev                        # uses DOMAIN=website.dn.womblelabs.co.uk
-make deploy-dev DOMAIN=example.com     # override domain
-```
-
-After the first deploy, add the Route 53 nameservers shown in the `NetworkStack` output to the parent DNS zone.
-
-### Deploy a specific image tag
+Pushes to `main` deploy automatically. To do the same by hand, there are two steps:
 
 ```bash
-cdk deploy --all -c domain=example.com -c imageTag=abc1234
+make deploy-dev                                        # infrastructure (CDK)
+make deploy-server IMAGE=<ecr-repo>:<tag>              # run that image on the server
 ```
+
+Override the domain with `DOMAIN=example.com`. After the first deploy, add the Route 53 nameservers shown in the `NetworkStack` output to the parent DNS zone.
+
+### Setting up a new environment
+
+The first deploy of a new environment must restore data **before** the site is reachable, because a fresh Ghost lets anyone who finds `/ghost/setup` create the owner account:
+
+```bash
+cdk deploy EcrStack NetworkStack LightsailStack -c domain=example.com
+# push an image to ECR, then:
+make restore-server IMAGE=<ecr-repo>:<tag> SQL=backup.sql.gz CONTENT=content.tar.gz DOMAIN=example.com
+make deploy-dev DOMAIN=example.com
+```
+
+`CONTENT` is a gzipped tar with `images/`, `media/` and `files/` at the top level. `restore-server` replaces all data on the server.
+
+### Getting on the server
+
+No SSH keys or AWS credentials are stored. `scripts/lightsail.sh` asks Lightsail for a short-lived SSH certificate and opens port 22 to your IP address only while it runs:
+
+```bash
+scripts/lightsail.sh run "docker ps"
+```
+
+The browser SSH client in the Lightsail console also works.
+
+### Changing the server
+
+- `deploy/first_boot.sh` only runs when a server is created, and must stay plain POSIX `sh`.
+- Moving to a bigger plan means creating a new server from a snapshot, as `BundleId` can't be updated.
 
 ## Running tests
 
@@ -60,10 +80,11 @@ make smoke URL=https://example.com # smoke tests against a live URL
 ## Repository structure
 
 ```
-docker/        Dockerfile and nginx config
+deploy/        The deployed stack: Compose file, nginx config, first-boot script
+docker/        Ghost Dockerfile and local nginx config
 docs/          Architecture decisions and specs
 infra/         Python CDK stacks
-scripts/       Operational scripts (new-env setup)
+scripts/       Operational scripts (server deploys and restores, OIDC setup, Medium import)
 tests/         Smoke tests
 theme/         Ghost theme (Handlebars)
 ```

@@ -47,24 +47,22 @@ Local Ghost can use a mounted local volume for content/uploads.
 Claude may choose stack boundaries, but should consider separate stacks for:
 
 - foundational/account setup if needed.
-- database.
-- app/ECS.
+- the Lightsail server.
 - CDN/DNS/certificates.
 
 Be careful with CloudFront certificates needing us-east-1.
 
-## RDS deletion safety
+## Data safety
 
-Prod database must be hard to delete accidentally:
+The server holds the database and uploads, so it must be hard to delete accidentally:
 
-- deletion protection.
 - removal policy retain.
-- backups.
+- automatic snapshots.
 
-The app stack should be replaceable without replacing the database.
+A deploy replaces the containers but never the volumes.
 
 ## GitHub OIDC
 
-`scripts/new_env.py` should create or verify the GitHub OIDC provider and deploy role. It should scope trust to the configured repo and branch.
+`scripts/setup_oidc.py` should create or verify the GitHub OIDC provider and deploy role. It should scope trust to the configured repo and branch.
 
 Do not use long-lived AWS access keys in GitHub Actions.

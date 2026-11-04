@@ -1,0 +1,21 @@
+# Only CloudFront can reach this server's web port, and it serves viewers over
+# HTTPS, so Ghost is always told the request was HTTPS on the public domain.
+server {
+    listen 80 default_server;
+
+    # Allow large image uploads. nginx defaults to 1m.
+    client_max_body_size 50m;
+
+    location / {
+        # Look Ghost up per request: a deploy gives its container a new IP address.
+        resolver 127.0.0.11 valid=10s;
+        set $ghost_upstream http://ghost:2368;
+        proxy_pass $ghost_upstream;
+
+        proxy_set_header Host              ${GHOST_DOMAIN};
+        proxy_set_header X-Forwarded-Host  ${GHOST_DOMAIN};
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP         $remote_addr;
+    }
+}

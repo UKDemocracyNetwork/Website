@@ -35,6 +35,6 @@ After the user approves the plan, implement the project incrementally.
 
 ## MVP summary
 
-The MVP is a single committed homepage rendered by a custom Ghost theme running on ECS Fargate. It is fronted by CloudFront, uses RDS MySQL, and is deployed through GitHub Actions. Dev and prod are separate AWS accounts. The same Docker image is built once, deployed to dev, smoke-tested, then promoted to prod after approval.
+The MVP is a single committed homepage rendered by a custom Ghost theme running in Docker on an Amazon Lightsail server, alongside MySQL. It is fronted by CloudFront and is deployed through GitHub Actions. Dev and prod are separate AWS accounts. The same Docker image is built once, deployed to dev, smoke-tested, then promoted to prod after approval.
 
 Claude should read all files in `docs/` before planning or implementing.

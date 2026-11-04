@@ -8,7 +8,7 @@ doctype, landmarks, skip link, head/foot injection points, and stylesheet.
 
 The shell and assets must reach two very different runtimes:
 
-- **Ghost on ECS Fargate** — theme copied into the image with `docker COPY`.
+- **Ghost on Lightsail** — theme copied into the image with `docker COPY`.
 - **Starlette on Lambda** (future) — templates/static gathered by Lambda bundling.
 
 Neither `docker COPY` nor Lambda bundling reliably follows symlinks, so we keep

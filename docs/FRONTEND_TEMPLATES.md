@@ -15,7 +15,7 @@ The site must serve one consistent outer HTML page ("the shell": doctype,
 landmarks, skip link, `<head>`/foot injection points) from two different
 template engines:
 
-- **Now:** Ghost on ECS Fargate, which renders **Handlebars** (`.hbs`).
+- **Now:** Ghost on Lightsail, which renders **Handlebars** (`.hbs`).
 - **Later:** a Starlette app on Lambda (see SPEC.md "Shared shell direction"),
   which renders **Jinja2**.
 

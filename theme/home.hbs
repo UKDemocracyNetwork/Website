@@ -40,13 +40,15 @@
 
 <h2>Latest bulletins</h2>
 {{#get "posts" limit="3" filter="tag:bulletin" as |latest|}}
-  <ul class="cards" role="list">
-    {{#foreach latest}}
-      <li>{{> "bulletin-card"}}</li>
-    {{/foreach}}
-  </ul>
-{{else}}
-  <p>No bulletins yet.</p>
+  {{#if latest}}
+    <ul class="cards" role="list">
+      {{#foreach latest}}
+        <li>{{> "bulletin-card"}}</li>
+      {{/foreach}}
+    </ul>
+  {{else}}
+    <p>No bulletins yet.</p>
+  {{/if}}
 {{/get}}
 
 <p><a class="button button--secondary" href="/bulletin/">See all bulletins</a></p>
