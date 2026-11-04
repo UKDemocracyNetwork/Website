@@ -1,12 +1,21 @@
 {{!-- A single bulletin — EDIT THIS for the single-post layout.
      Rendered by post.hbs (Ghost requires the post template to be named post.hbs,
      so it's a thin wrapper that includes this partial). --}}
-<article>
-    <header>
-        <h1>{{title}}</h1>
-        <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time>
-    </header>
-    <section class="prose">
-        {{content}}
-    </section>
+<article class="article">
+  <p class="article__back"><a href="/bulletin/">&lt;&nbsp;All bulletins</a></p>
+  <header class="article__header">
+    <h1>{{title}}</h1>
+    <p class="post-meta"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time></p>
+  </header>
+  {{#if feature_image}}
+    <figure class="article__feature">
+      <img src="{{feature_image}}" alt="{{feature_image_alt}}">
+      {{#if feature_image_caption}}
+        <figcaption>{{feature_image_caption}}</figcaption>
+      {{/if}}
+    </figure>
+  {{/if}}
+  <div class="prose">
+    {{content}}
+  </div>
 </article>

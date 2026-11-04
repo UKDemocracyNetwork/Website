@@ -1,17 +1,12 @@
-<article class="card">
-        <header>
-          <h3><a href="{{url}}" class="card-link">{{title}}</a></h3>
-        </header>
-        <div class="card-body">
-          {{#if feature_image}}
-            <img src="{{feature_image}}" alt="{{feature_image_alt}}" loading="lazy">
-          {{/if}}
-
-          {{#if custom_excerpt}}
-            <p>{{custom_excerpt}}</p>
-          {{/if}}
-          <p class="post-meta">
-            <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time>
-          </p>
-        </div>
-      </article>
+{{!-- Card for the homepage, where it sits under an h2. The image is decorative
+     here: the title link already names the bulletin. --}}
+<article class="card stretched">
+  <h3><a href="{{url}}">{{title}}</a></h3>
+  {{#if feature_image}}
+    <img src="{{feature_image}}" alt="" loading="lazy">
+  {{/if}}
+  {{#if custom_excerpt}}
+    <p>{{custom_excerpt}}</p>
+  {{/if}}
+  <p class="post-meta"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time></p>
+</article>

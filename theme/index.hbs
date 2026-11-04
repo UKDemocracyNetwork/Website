@@ -7,16 +7,7 @@
 <h1>{{meta_title}}</h1>
 
 {{#if posts}}
-<div class="post-list">
-    {{#foreach posts}}
-    <article class="post-card">
-        <h2 class="post-card__title"><a href="{{url}}">{{title}}</a></h2>
-        <p class="post-meta"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time></p>
-    </article>
-    {{/foreach}}
-</div>
-
-{{pagination}}
+  {{> "post-list"}}
 {{else}}
-<p>Nothing here yet.</p>
+  <p>Nothing here yet.</p>
 {{/if}}
