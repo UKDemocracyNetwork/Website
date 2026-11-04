@@ -1,0 +1,71 @@
+# The deployed stack: Ghost, MySQL and nginx on one Lightsail server.
+#
+# scripts/lightsail.sh copies this directory to the server and runs it with two
+# env files: secrets.env (made once at first boot, never leaves the server) and
+# release.env (written by each deploy: GHOST_IMAGE, GHOST_DOMAIN).
+name: ghost
+
+services:
+  mysql:
+    image: mysql:8.4.13
+    restart: unless-stopped
+    # Sized to share a 2GB server with Ghost.
+    command:
+      - --innodb-buffer-pool-size=256M
+      - --performance-schema=OFF
+      - --max-connections=50
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?}
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ghost
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  ghost:
+    image: ${GHOST_IMAGE:?}
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      url: https://${GHOST_DOMAIN:?}
+      database__client: mysql
+      database__connection__host: mysql
+      database__connection__port: "3306"
+      database__connection__user: ghost
+      database__connection__password: ${MYSQL_PASSWORD:?}
+      database__connection__database: ghost
+      # This check emails staff a login code. Email isn't configured yet, so
+      # leaving it on would lock everyone out of Ghost Admin.
+      security__staffDeviceVerification: "false"
+    # Only uploads live on volumes. The theme and routes.yaml come from the image,
+    # so a volume over all of content/ would freeze them at the first deploy.
+    volumes:
+      - ghost_images:/var/lib/ghost/content/images
+      - ghost_media:/var/lib/ghost/content/media
+      - ghost_files:/var/lib/ghost/content/files
+
+  nginx:
+    image: nginx:1.30.6-alpine
+    restart: unless-stopped
+    depends_on:
+      - ghost
+    environment:
+      GHOST_DOMAIN: ${GHOST_DOMAIN:?}
+    volumes:
+      - ./nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
+    ports:
+      - "${HTTP_PORT:-80}:80"
+
+volumes:
+  mysql_data:
+  ghost_images:
+  ghost_media:
+  ghost_files:

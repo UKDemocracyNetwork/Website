@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:8.0
+    image: mysql:8.4.13
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ghost
@@ -43,7 +43,7 @@ services:
       - ghost_content:/var/lib/ghost/content
 
   nginx:
-    image: nginx:alpine
+    image: nginx:1.30.6-alpine
     depends_on:
       - ghost
     volumes:

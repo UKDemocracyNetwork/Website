@@ -78,3 +78,6 @@ cdk.context.json
 
 # Medium -> Ghost migration state (maps to per-environment Ghost post/image ids)
 .medium-import-state.json
+
+# Local database and upload backups
+backups/

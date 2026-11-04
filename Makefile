@@ -1,11 +1,10 @@
 .DEFAULT_GOAL := help
 
-# Override on the command line: make deploy-dev DOMAIN=prod.example.com IMAGE_TAG=abc1234
+# Override on the command line: make deploy-dev DOMAIN=prod.example.com
 DOMAIN ?= website.dn.womblelabs.co.uk
-IMAGE_TAG ?= latest
 
 .PHONY: help install dev dev-stop dev-logs dev-build dev-clean \
-        build check-build watch lint format test synth deploy-dev new-env smoke import-medium
+        build check-build watch lint format test synth deploy-dev deploy-server restore-server smoke import-medium
 
 help:
 	@echo "Local dev"
@@ -22,9 +21,10 @@ help:
 	@echo "  test       Run pytest"
 	@echo ""
 	@echo "Deployment"
-	@echo "  new-env    Write SSM parameters for a new environment (run once per account)"
 	@echo "  synth      Synthesise CloudFormation templates"
 	@echo "  deploy-dev Deploy all stacks to dev account"
+	@echo "  deploy-server  Run IMAGE=<ecr image> on the Lightsail server"
+	@echo "  restore-server Replace server data: IMAGE=... SQL=<.sql.gz> CONTENT=<.tar.gz>"
 	@echo "  smoke      Run smoke tests against URL=<url>"
 	@echo "  import-medium  Import a Medium export into Ghost (ZIP=... ARGS=...)"
 
@@ -75,10 +75,13 @@ synth:
 	cdk synth -c domain=$(DOMAIN)
 
 deploy-dev:
-	cdk deploy --all --require-approval never -c domain=$(DOMAIN) -c imageTag=$(IMAGE_TAG)
+	cdk deploy --all --require-approval never -c domain=$(DOMAIN)
 
-new-env:
-	uv run python scripts/new_env.py
+deploy-server:
+	scripts/lightsail.sh deploy "$(IMAGE)" "$(DOMAIN)"
+
+restore-server:
+	scripts/lightsail.sh restore "$(IMAGE)" "$(DOMAIN)" "$(SQL)" "$(CONTENT)"
 
 # Import a Medium export into Ghost. Needs GHOST_API_URL + GHOST_ADMIN_API_KEY in
 # the env (a Ghost custom-integration Admin key). Override ZIP and pass ARGS, e.g.

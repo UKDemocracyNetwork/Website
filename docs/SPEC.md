@@ -15,7 +15,6 @@ The project is primarily a golden thread for future work: local development, bui
 - No CMS-managed homepage.
 - No membership/newsletter setup unless required by Ghost defaults.
 - No Cognito or Google Workspace auth in front of Ghost admin.
-- No Multi-AZ RDS.
 - No EFS.
 - No frontend framework.
 - No JavaScript.
@@ -25,9 +24,9 @@ The project is primarily a golden thread for future work: local development, bui
 
 - Ghost runs in a custom Docker image.
 - Docker image is based on a pinned Ghost version.
-- Ghost runs on ECS Fargate.
+- Ghost runs on an Amazon Lightsail server with Docker Compose, alongside MySQL and nginx.
 - Each environment has its own AWS account.
-- Each environment has its own RDS MySQL instance.
+- Each environment has its own server and MySQL database.
 - Each environment has its own Route 53 DNS.
 - CloudFront fronts the public site.
 - Ghost admin is exposed at `/ghost/` for MVP.
@@ -37,10 +36,11 @@ The project is primarily a golden thread for future work: local development, bui
 
 ## Storage decisions
 
-- RDS MySQL stores Ghost data.
-- S3 is the target for Ghost media/uploads in deployed environments.
+- MySQL stores Ghost data, on a Docker volume on the Lightsail server.
+- Ghost media/uploads are on Docker volumes on the same server.
+- Only uploads are on volumes: the theme and `routes.yaml` come from the image.
+- Daily Lightsail snapshots cover the whole server. Off-server backups are needed before production.
 - Local development may use a local mounted Docker volume for Ghost content/uploads.
-- EFS is explicitly not part of MVP, but may be reconsidered if the S3 adapter proves unreliable.
 
 ## Custom Ghost image
 
@@ -48,7 +48,6 @@ The custom Ghost image should include:
 
 - Pinned Ghost version in one place, preferably a Dockerfile ARG.
 - Repo-owned custom theme.
-- S3 storage adapter.
 - Startup validation script.
 
 The startup script should validate required environment variables/config before launching Ghost.
@@ -102,29 +101,15 @@ There are two MVP environments:
 - dev account.
 - prod account.
 
-Dev is not always-on. It should be possible to stop or destroy dev app runtime where sensible.
-
 Prod uses temporary production domain initially because the final domain already hosts an existing site.
 
-## RDS requirements
+## Server requirements
 
-Dev and prod each have separate RDS instances.
+Dev and prod each have separate Lightsail servers.
 
-Prod RDS:
-
-- Tiny instance, likely `db.t4g.micro` to start.
-- Single-AZ.
-- Deletion protection enabled.
-- Removal policy retain.
-- Automated backups enabled.
-- Not casually deleted by stack deletion.
-
-Dev RDS:
-
-- Tiny instance.
-- Single-AZ.
-- Short backup retention.
-- May be stopped or treated as disposable.
+- The server is retained if its stack is deleted, because it holds the data.
+- Automatic daily snapshots are enabled.
+- A new environment restores its data before Ghost first starts, so the public setup page is never exposed.
 
 Ghost manages its own schema/migrations on startup.
 
@@ -163,42 +148,24 @@ The prod account pulls the image cross-account from the dev account ECR.
 
 - Shared ECR lives in the dev account.
 - GitHub Actions can push to ECR.
-- Dev ECS can pull normally.
-- Prod ECS can pull cross-account.
+- Deploys pull on the server with a temporary ECR token passed over SSH.
+- Prod pulls cross-account.
 - Add a lifecycle policy to clean old images while preserving recent/prod images.
 
 ## Config and parameters
 
-Use AWS SSM Parameter Store plain String parameters for runtime config/secrets for MVP.
+- Database passwords are generated at first boot and stay in `/opt/ghost/secrets.env` on the server.
+- Each deploy writes the image and domain to `/opt/ghost/release.env`.
+- Everything else is in `deploy/compose.yml`.
 
-Because each AWS account is dedicated to this project/environment, do not include project or environment prefixes in parameter names.
+Do not commit real values to Git.
 
-Use account-local paths such as:
+## First-time environment setup
 
-- `/ghost/url`
-- `/ghost/database/host`
-- `/ghost/database/name`
-- `/ghost/database/user`
-- `/ghost/database/password`
-- `/ghost/s3/bucket`
-- `/ghost/s3/region`
-- `/cache/html_ttl`
-
-Do not commit real parameter values to Git.
-
-## First-time environment setup script
-
-Create `scripts/new_env.py`.
-
-It should:
+`scripts/setup_oidc.py` should:
 
 - Use boto3.
-- Confirm the current AWS account/profile before making changes.
-- Ask interactively for required values.
-- Write SSM parameters.
-- Refuse to overwrite existing values unless `--force` is supplied.
-- Create or verify the GitHub OIDC provider.
-- Create or verify the GitHub Actions deploy role.
+- Create or verify the GitHub OIDC provider and the GitHub Actions deploy role.
 - Scope GitHub OIDC trust to the configured GitHub repo and branch.
 - Print next-step instructions after completion.
 
@@ -221,7 +188,8 @@ Expected Makefile targets:
 - `make format`
 - `make synth`
 - `make deploy-dev`
-- `make new-env`
+- `make deploy-server IMAGE=...`
+- `make restore-server IMAGE=... SQL=... CONTENT=...`
 - `make smoke URL=...`
 
 ## Quality checks

@@ -2,7 +2,6 @@ from aws_cdk import CfnOutput, Duration, Stack
 from aws_cdk import aws_certificatemanager as acm
 from aws_cdk import aws_cloudfront as cloudfront
 from aws_cdk import aws_cloudfront_origins as origins
-from aws_cdk import aws_elasticloadbalancingv2 as elbv2
 from aws_cdk import aws_route53 as route53
 from aws_cdk import aws_route53_targets as targets
 from constructs import Construct
@@ -14,7 +13,7 @@ class CdnStack(Stack):
         scope: Construct,
         id: str,
         *,
-        alb: elbv2.ApplicationLoadBalancer,
+        origin_domain_name: str,
         certificate: acm.ICertificate,
         hosted_zone: route53.IHostedZone,
         domain_name: str,
@@ -44,17 +43,16 @@ class CdnStack(Stack):
             enable_accept_encoding_brotli=True,
         )
 
-        # HTTP to ALB avoids the SSL cert mismatch: the ALB cert is for the
-        # custom domain, not the ALB hostname. CloudFront cannot verify it.
-        # HTTPS is enforced at the viewer level by viewer_protocol_policy below.
-        alb_origin = origins.LoadBalancerV2Origin(
-            alb,
+        # The Lightsail server only speaks HTTP, so traffic between CloudFront and
+        # the server is unencrypted. Viewers always use HTTPS (see below). Its
+        # firewall only accepts web traffic from CloudFront.
+        server_origin = origins.HttpOrigin(
+            origin_domain_name,
             protocol_policy=cloudfront.OriginProtocolPolicy.HTTP_ONLY,
             http_port=80,
         )
 
-        # Forward the viewer's Host header so Ghost receives the custom domain name
-        # rather than the ALB hostname. Without this Ghost redirects every request.
+        # Forward cookies, query strings and headers to Ghost.
         all_viewer_policy = cloudfront.OriginRequestPolicy.from_origin_request_policy_id(
             self, "AllViewerPolicy", "216adef6-5c7f-47e4-b989-5492eafa07d3"
         )
@@ -66,7 +64,7 @@ class CdnStack(Stack):
             certificate=certificate,
             minimum_protocol_version=cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
             default_behavior=cloudfront.BehaviorOptions(
-                origin=alb_origin,
+                origin=server_origin,
                 viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                 cache_policy=html_cache_policy,
                 origin_request_policy=all_viewer_policy,
@@ -76,7 +74,7 @@ class CdnStack(Stack):
             additional_behaviors={
                 # Ghost admin and API — never cache, forward all headers and cookies
                 "/ghost/*": cloudfront.BehaviorOptions(
-                    origin=alb_origin,
+                    origin=server_origin,
                     viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                     cache_policy=cloudfront.CachePolicy.CACHING_DISABLED,
                     origin_request_policy=all_viewer_policy,
@@ -85,14 +83,14 @@ class CdnStack(Stack):
                 ),
                 # Theme static assets — long cache
                 "/assets/*": cloudfront.BehaviorOptions(
-                    origin=alb_origin,
+                    origin=server_origin,
                     viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                     cache_policy=static_cache_policy,
                     compress=True,
                 ),
                 # Ghost media uploads — long cache
                 "/content/images/*": cloudfront.BehaviorOptions(
-                    origin=alb_origin,
+                    origin=server_origin,
                     viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                     cache_policy=static_cache_policy,
                     compress=True,
