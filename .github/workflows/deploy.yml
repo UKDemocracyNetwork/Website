@@ -12,6 +12,12 @@ env:
   AWS_REGION: eu-west-2
   DOMAIN: website.dn.womblelabs.co.uk
 
+# Queue overlapping pushes: two runs can't update the same CloudFormation stacks
+# at once, and cancelling a run mid-deploy could interrupt a stack update.
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
 jobs:
   deploy-dev:
     name: Deploy to dev
