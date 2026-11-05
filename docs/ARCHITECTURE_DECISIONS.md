@@ -100,6 +100,8 @@ Database passwords are generated at first boot and stored only in `/opt/ghost/se
 
 Reason: nothing outside the server needs them, and standard Lightsail servers can't use an IAM role to read SSM. This also means no long-lived AWS keys on the server: each deploy passes a temporary ECR token over SSH.
 
+The SMTP login is the exception, as it comes from outside. It lives in SSM (`/ghost/mail/user` and the SecureString `/ghost/mail/password`), and each deploy copies it to `/opt/ghost/mail.env` over SSH.
+
 ## ADR 015: Deploy over SSH with temporary access
 
 Deploys ask Lightsail for a short-lived SSH certificate, open port 22 to the deploy machine's IP address, and close it again afterwards.

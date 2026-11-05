@@ -1,8 +1,9 @@
 # The deployed stack: Ghost, MySQL and nginx on one Lightsail server.
 #
 # scripts/lightsail.sh copies this directory to the server and runs it with two
-# env files: secrets.env (made once at first boot, never leaves the server) and
-# release.env (written by each deploy: GHOST_IMAGE, GHOST_DOMAIN).
+# env files: secrets.env (made once at first boot, never leaves the server),
+# release.env (written by each deploy: GHOST_IMAGE, GHOST_DOMAIN) and mail.env
+# (written by each deploy from SSM: the SMTP login).
 name: ghost
 
 services:
@@ -42,6 +43,15 @@ services:
       database__connection__user: ghost
       database__connection__password: ${MYSQL_PASSWORD:?}
       database__connection__database: ghost
+      # Staff invitations, password resets and member login links. Newsletters use
+      # the Mailgun API settings in Ghost Admin instead.
+      mail__transport: SMTP
+      mail__from: "Democracy Network <${MAIL_SMTP_USER:?}>"
+      mail__options__host: smtp.eu.mailgun.org
+      mail__options__port: "465"
+      mail__options__secure: "true"
+      mail__options__auth__user: ${MAIL_SMTP_USER:?}
+      mail__options__auth__pass: ${MAIL_SMTP_PASSWORD:?}
       # This check emails staff a login code. Email isn't configured yet, so
       # leaving it on would lock everyone out of Ghost Admin.
       security__staffDeviceVerification: "false"

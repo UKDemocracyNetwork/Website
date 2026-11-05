@@ -156,6 +156,7 @@ The prod account pulls the image cross-account from the dev account ECR.
 
 - Database passwords are generated at first boot and stay in `/opt/ghost/secrets.env` on the server.
 - Each deploy writes the image and domain to `/opt/ghost/release.env`.
+- The SMTP login is in SSM at `/ghost/mail/user` and `/ghost/mail/password`, and each deploy copies it to `/opt/ghost/mail.env`.
 - Everything else is in `deploy/compose.yml`.
 
 Do not commit real values to Git.

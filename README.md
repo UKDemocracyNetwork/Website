@@ -32,6 +32,7 @@ On first run, visit `http://localhost:8080/ghost/` to complete Ghost setup, then
 - AWS CLI configured for the target account
 - CDK bootstrapped: `cdk bootstrap aws://ACCOUNT/eu-west-2` and `cdk bootstrap aws://ACCOUNT/us-east-1`
 - GitHub OIDC role created (run once per account): `uv run python scripts/setup_oidc.py`
+- Mailgun SMTP login in SSM (deploys fail without it): `/ghost/mail/user` as a String and `/ghost/mail/password` as a SecureString
 
 Pushes to `main` deploy automatically. To do the same by hand, there are two steps:
 
