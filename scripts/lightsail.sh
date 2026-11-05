@@ -14,7 +14,7 @@ set -euo pipefail
 INSTANCE="${LIGHTSAIL_INSTANCE:-dn-website-ghost}"
 REGION="${AWS_REGION:-eu-west-2}"
 REMOTE_DIR=/opt/ghost
-COMPOSE="docker compose --env-file secrets.env --env-file release.env"
+COMPOSE="docker compose --env-file secrets.env --env-file release.env --env-file mail.env"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 WORK_DIR="$(mktemp -d)"
@@ -71,6 +71,18 @@ sync_release() {
   scp "${SSH_OPTS[@]}" "$REPO_ROOT/deploy/compose.yml" "$REPO_ROOT/deploy/nginx.conf.template" \
     "$USER_NAME@$HOST:$REMOTE_DIR/" >/dev/null
   printf 'GHOST_IMAGE=%s\nGHOST_DOMAIN=%s\n' "$image" "$domain" | remote "cat > release.env"
+  sync_mail_settings
+}
+
+# SSM holds the SMTP login. Sent over SSH so it never appears in a command line.
+sync_mail_settings() {
+  local user password
+  user="$(aws ssm get-parameter --region "$REGION" --name /ghost/mail/user \
+    --query Parameter.Value --output text)"
+  password="$(aws ssm get-parameter --region "$REGION" --name /ghost/mail/password --with-decryption \
+    --query Parameter.Value --output text)"
+  printf "MAIL_SMTP_USER='%s'\nMAIL_SMTP_PASSWORD='%s'\n" "$user" "$password" |
+    remote "umask 077 && cat > mail.env"
 }
 
 pull_images() {

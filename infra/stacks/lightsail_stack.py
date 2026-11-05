@@ -114,6 +114,11 @@ class LightsailStack(Stack):
                     ],
                     resources=["*"],
                 ),
+                # The SMTP login, which each deploy copies to the server.
+                iam.PolicyStatement(
+                    actions=["ssm:GetParameter"],
+                    resources=[self.format_arn(service="ssm", resource="parameter/ghost/mail/*")],
+                ),
             ],
         )
 
